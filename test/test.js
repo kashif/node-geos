@@ -1,6 +1,6 @@
 var assert = require('assert');
 
-var geonode = require("./geonode");
+var geonode = require(__dirname + '/../build/default/binding');
 var sys = require("sys");
 
 var rss = process.memoryUsage().rss;
@@ -19,7 +19,7 @@ var geom = new Geometry();
 
 assert.ok(geom instanceof Geometry);
 
-assert.ok(/^3\.[0-9.]+-CAPI-1\.[56]\.[0-9]$/.test(geom._geosVersion));
+assert.ok(/^3\.[0-9.]+-CAPI-1\.[567]\.[0-9]$/.test(geom._geosVersion));
 
 assert.equal(geom.toWkt(), "");
 

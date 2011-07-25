@@ -16,7 +16,7 @@ def configure(conf):
   geos_config = conf.find_program('geos-config', var='GEOS_CONFIG', mandatory=True)
   geos_ldflags = popen("%s --ldflags" % geos_config).readline().strip()[2:]
   conf.env.append_value("LIBPATH_GEOS", geos_ldflags)
-  conf.env.append_value("LIB_PG", "geos")
+  conf.env.append_value("LIB_GEOS", "geos_c")
   geos_cflags = popen("%s --cflags" % geos_config).readline().strip()
   conf.env.append_value("CPPPATH_GEOS", geos_cflags)
 
