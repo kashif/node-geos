@@ -1,6 +1,6 @@
 var assert = require("assert");
-var Geometry = require("../index").Geometry;
-var StrTree = require("../index").StrTree;
+var Geometry = require("../geos").Geometry;
+var StrTree = require("../geos").StrTree;
 var g = new Geometry("POINT(10 10)");
 var t = new StrTree();
 try {
