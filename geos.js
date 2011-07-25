@@ -1,3 +1,3 @@
-exports.Geometry = require('./build/default/binding').Geometry
-exports.Projection = require('./build/default/binding').Projection
-exports.StrTree = require('./build/default/binding').StrTree
+exports.Geometry = require('./build/default/geos').Geometry
+exports.Projection = require('./build/default/geos').Projection
+exports.StrTree = require('./build/default/geos').StrTree
