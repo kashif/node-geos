@@ -30,7 +30,7 @@
 , "scripts":
   { "install" : "node-waf configure build"
   }
-, "main": "./lib/index.js"
+, "main": "./geos.js"
 , "dependencies":
   {
   }
