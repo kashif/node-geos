@@ -31,6 +31,6 @@ def configure(conf):
 def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
   obj.cxxflags = ["-g", "-D_LARGEFILE_SOURCE", "-Wall"]
-  obj.target = 'binding'
-  obj.source = "./src/binding.cpp"
+  obj.target = 'geos'
+  obj.source = "src/binding.cpp src/geometry.cpp src/projection.cpp"
   obj.uselib = "GEOS PROJ"

@@ -1,6 +1,6 @@
 var assert = require('assert');
 
-var geonode = require(__dirname + '/../build/default/binding');
+var geonode = require(__dirname + '/../build/default/geos');
 var sys = require("sys");
 
 var rss = process.memoryUsage().rss;
