@@ -1,0 +1,43 @@
+{ "name": "geos"
+, "description": "GEOS (Geometry Engine) and PROJ.4 (Cartographic Projections) bindings for Node."
+, "author": "Kashif Rasul <kashif@nomad-labs.com>"
+, "contributors" :
+  [ { "name": "Paul Smith"
+    , "web": "http://pauladamsmith.com"
+    , "email": "paulsmith@pobox.com"
+    }
+  , { "name": "Kashif Rasul"
+    , "email": "kashif@nomad-labs.com"
+    }
+  , { "name": "Rick Branson"
+    , "email": "rick@diodeware.com"
+    }
+  , { "name": "Johan Euphrosine"
+    }
+  ]
+, "version": "0.0.1"
+, "licenses": [
+  { "type": "MIT"
+  , "url": "https://github.com/kashif/project/raw/master/LICENSE"
+  }]
+, "repository":
+  { "type": "git"
+  , "url": "https://github.com/kashif/node-geos.git"
+  }
+, "bugs":
+  { "web": "http://github.com/kashif/node-geos/issues"
+  }
+, "scripts":
+  { "install" : "node-waf configure build"
+  }
+, "main": "./lib/index.js"
+, "dependencies":
+  {
+  }
+, "devDependencies":
+  {
+  }
+, "engines":
+  { "node": "~0.4"
+  }
+}

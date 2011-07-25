@@ -1,0 +1,5 @@
+build
+.waf*
+*.swp
+.lock-wscript
+.DS_Store
