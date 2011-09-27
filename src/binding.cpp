@@ -2,8 +2,6 @@
 
 #include "binding.hpp"
 #include "geometry.hpp"
-#include "projection.hpp"
-#include "strTree.hpp"
 
 /* required functions to initialize GEOS */
 // TODO: what to do here?? Is printing to stderr the best thing to do ... ?
@@ -31,8 +29,5 @@ void error_handler(const char *fmt, ...)
 extern "C"
 void init (Handle<Object> target) {
   HandleScope scope;
-  initGEOS(notice_handler, error_handler);
   Geometry::Initialize(target);
-  Projection::Initialize(target);
-  StrTree::Initialize(target);
 }
