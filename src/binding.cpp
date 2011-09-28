@@ -4,7 +4,10 @@
 
 extern "C"
 void init (Handle<Object> target) {
-  HandleScope scope;
-  Geometry::Initialize(target);
-  WKTReader::Initialize(target);
+    HandleScope scope;
+
+    target->Set(String::NewSymbol("geosversion"), String::NewSymbol(geos::geom::geosversion().data()));
+
+    Geometry::Initialize(target);
+    WKTReader::Initialize(target);
 }
