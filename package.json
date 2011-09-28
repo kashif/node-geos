@@ -36,6 +36,8 @@
   }
 , "devDependencies":
   {
+    "vows": "*",
+    "coffee-script": "*"
   }
 , "engines":
   { "node": "~0.4"
