@@ -21,6 +21,7 @@ void Geometry::Initialize(Handle<Object> target)
     constructor->SetClassName(String::NewSymbol("Geometry"));
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", Geometry::ToString);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "equals", Geometry::Equals);
 
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
@@ -47,3 +48,16 @@ Handle<Value> Geometry::ToString(const Arguments& args) {
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     return scope.Close(String::New(geom->_geom->toString().data()));
 }
+
+Handle<Value> Geometry::Equals(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+    if (geom->_geom->equals(geom2->_geom)) {
+        return True();
+    } else {
+        return False();
+    }
+}
+
+
