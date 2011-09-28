@@ -15,6 +15,8 @@ class Geometry : public ObjectWrap {
  protected:
     static Handle<Value> New(const Arguments& args);
     static Handle<Value> Equals(const Arguments& args);
+    static Handle<Value> Touches(const Arguments& args);
+    static Handle<Value> Disjoint(const Arguments& args);
 
  private:
     static Persistent<FunctionTemplate> constructor;

@@ -22,6 +22,8 @@ void Geometry::Initialize(Handle<Object> target)
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", Geometry::ToString);
     NODE_SET_PROTOTYPE_METHOD(constructor, "equals", Geometry::Equals);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "touches", Geometry::Touches);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "disjoint", Geometry::Disjoint);
 
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
@@ -60,4 +62,25 @@ Handle<Value> Geometry::Equals(const Arguments& args) {
     }
 }
 
+Handle<Value> Geometry::Touches(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+    if (geom->_geom->touches(geom2->_geom)) {
+        return True();
+    } else {
+        return False();
+    }
+}
+
+Handle<Value> Geometry::Disjoint(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+    if (geom->_geom->disjoint(geom2->_geom)) {
+        return True();
+    } else {
+        return False();
+    }
+}
 

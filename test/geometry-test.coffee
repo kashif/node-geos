@@ -23,4 +23,12 @@ tests = (vows.describe "Geometry").addBatch
       assert.isFunction geom.equals
       assert.ok geom.equals geom
 
+    "should have a touches function": (geom) ->
+      assert.isFunction geom.touches
+      assert.ok not geom.touches geom
+
+    "should have a disjoint function": (geom) ->
+      assert.isFunction geom.disjoint
+      assert.ok not geom.disjoint geom
+
 tests.export module
