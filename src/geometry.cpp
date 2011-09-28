@@ -21,9 +21,23 @@ void Geometry::Initialize(Handle<Object> target)
     constructor->SetClassName(String::NewSymbol("Geometry"));
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", Geometry::ToString);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "equals", Geometry::Equals);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "touches", Geometry::Touches);
+    //GEOS unary predicates
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isSimple", Geometry::IsSimple);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", Geometry::IsValid);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isEmpty", Geometry::IsEmpty);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isRectangle", Geometry::IsRectangle);
+    //GEOS binary predicates
+    //TODO maybe define a macro for this too
     NODE_SET_PROTOTYPE_METHOD(constructor, "disjoint", Geometry::Disjoint);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "touches", Geometry::Touches);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "intersects", Geometry::Intersects);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "crosses", Geometry::Crosses);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "within", Geometry::Within);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Geometry::Contains);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "overlaps", Geometry::Overlaps);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "equals", Geometry::Equals);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "covers", Geometry::Covers);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "coveredBy", Geometry::CoveredBy);
 
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
@@ -51,36 +65,22 @@ Handle<Value> Geometry::ToString(const Arguments& args) {
     return scope.Close(String::New(geom->_geom->toString().data()));
 }
 
-Handle<Value> Geometry::Equals(const Arguments& args) {
-    HandleScope scope;
-    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
-    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-    if (geom->_geom->equals(geom2->_geom)) {
-        return True();
-    } else {
-        return False();
-    }
-}
+//GEOS unary predicates
+NODE_GEOS_UNARY_PREDICATE(IsSimple, isSimple);
+NODE_GEOS_UNARY_PREDICATE(IsValid, isValid);
+NODE_GEOS_UNARY_PREDICATE(IsEmpty, isEmpty);
+NODE_GEOS_UNARY_PREDICATE(IsRectangle, isRectangle);
 
-Handle<Value> Geometry::Touches(const Arguments& args) {
-    HandleScope scope;
-    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
-    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-    if (geom->_geom->touches(geom2->_geom)) {
-        return True();
-    } else {
-        return False();
-    }
-}
+// GEOS binary predicates
+NODE_GEOS_BINARY_PREDICATE(Disjoint, disjoint);
+NODE_GEOS_BINARY_PREDICATE(Touches, touches);
+NODE_GEOS_BINARY_PREDICATE(Intersects, intersects);
+NODE_GEOS_BINARY_PREDICATE(Crosses, crosses);
+NODE_GEOS_BINARY_PREDICATE(Within, within);
+NODE_GEOS_BINARY_PREDICATE(Contains, contains);
+NODE_GEOS_BINARY_PREDICATE(Overlaps, overlaps);
+NODE_GEOS_BINARY_PREDICATE(Equals, equals);
+NODE_GEOS_BINARY_PREDICATE(Covers, covers);
+NODE_GEOS_BINARY_PREDICATE(CoveredBy, coveredBy);
 
-Handle<Value> Geometry::Disjoint(const Arguments& args) {
-    HandleScope scope;
-    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
-    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-    if (geom->_geom->disjoint(geom2->_geom)) {
-        return True();
-    } else {
-        return False();
-    }
-}
 
