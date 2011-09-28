@@ -1,5 +1,6 @@
 #include "binding.hpp"
 #include "wktreader.hpp"
+#include "wktwriter.hpp"
 #include "geometry.hpp"
 
 extern "C"
@@ -10,4 +11,6 @@ void init (Handle<Object> target) {
 
     Geometry::Initialize(target);
     WKTReader::Initialize(target);
+    WKTWriter::Initialize(target);
+
 }

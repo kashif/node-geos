@@ -31,6 +31,7 @@
 
 class Geometry : public ObjectWrap {
  public:
+    geos::geom::Geometry* _geom;
     Geometry();
     Geometry(geos::geom::Geometry* geom);
     ~Geometry();
@@ -60,7 +61,6 @@ class Geometry : public ObjectWrap {
 
  private:
     static Persistent<FunctionTemplate> constructor;
-    geos::geom::Geometry* _geom;
     static Handle<Value> ToString(const Arguments& args);
 
 };

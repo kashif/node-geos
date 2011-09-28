@@ -32,5 +32,5 @@ def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
   obj.cxxflags = ["-g", "-D_LARGEFILE_SOURCE", "-Wall"]
   obj.target = 'geos'
-  obj.source = "src/binding.cpp src/geometry.cpp src/wktreader.cpp"
+  obj.source = "src/binding.cpp src/geometry.cpp src/wktreader.cpp src/wktwriter.cpp"
   obj.uselib = "GEOS PROJ"
