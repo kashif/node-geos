@@ -38,20 +38,27 @@ tests = (vows.describe "Geometry").addBatch
       assert.ok not geom.touches geom
     "should have a intersects function": (geom) ->
       assert.isFunction geom.intersects
+      assert.ok not geom.disjoint geom
     "should have a crosses function": (geom) ->
       assert.isFunction geom.crosses
+      assert.ok not geom.disjoint geom
     "should have a within function": (geom) ->
       assert.isFunction geom.within
+      assert.ok not geom.disjoint geom
     "should have a contains function": (geom) ->
       assert.isFunction geom.contains
+      assert.ok not geom.disjoint geom
     "should have a overlaps function": (geom) ->
       assert.isFunction geom.overlaps
+      assert.ok not geom.disjoint geom
     "should have a equals function": (geom) ->
       assert.isFunction geom.equals
       assert.ok geom.equals geom
     "should have a covers function": (geom) ->
       assert.isFunction geom.covers
+      assert.ok not geom.disjoint geom
     "should have a coveredBy function": (geom) ->
       assert.isFunction geom.coveredBy
+      assert.ok not geom.disjoint geom
 
 tests.export module
