@@ -91,7 +91,16 @@ tests = (vows.describe "Geometry").addBatch
       assert.isFunction geom.getEnvelope
       assert.equal geom.getEnvelope().toString(), "POINT (1.0000000000000000 1.0000000000000000)"
 
-    "should return a vaild envelope for a linestring": (geom) ->
+    "should return a valid envelope for a linestring": ->
+      geom = (new WKTReader()).read "LINESTRING (0 0, 1 1)"
+      #TODO remove this ugly wkt
+      assert.equal geom.getEnvelope().toString(), "POLYGON ((0.0000000000000000 0.0000000000000000, 1.0000000000000000 0.0000000000000000, 1.0000000000000000 1.0000000000000000, 0.0000000000000000 1.0000000000000000, 0.0000000000000000 0.0000000000000000))"
+
+    "should have a getBoundary function": (geom) ->
+      assert.isFunction geom.getBoundary
+      assert.equal geom.getBoundary().toString(), "GEOMETRYCOLLECTION EMPTY"
+
+    "should return a valid boundary for a linestring": ->
       geom = (new WKTReader()).read "LINESTRING (0 0, 1 1)"
       #TODO remove this ugly wkt
       assert.equal geom.getEnvelope().toString(), "POLYGON ((0.0000000000000000 0.0000000000000000, 1.0000000000000000 0.0000000000000000, 1.0000000000000000 1.0000000000000000, 0.0000000000000000 1.0000000000000000, 0.0000000000000000 0.0000000000000000))"
