@@ -73,6 +73,9 @@ class Geometry : public ObjectWrap {
     static Handle<Value> SymDifference(const Arguments& args);
     //static Handle<Value> EqualsExact(const Arguments& args);
 
+    static Handle<Value> Distance(const Arguments& args);
+    static Handle<Value> IsWithinDistance(const Arguments& args);
+
  private:
     static Persistent<FunctionTemplate> constructor;
     static Handle<Value> ToString(const Arguments& args);

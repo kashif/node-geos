@@ -45,6 +45,9 @@ void Geometry::Initialize(Handle<Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor, "difference", Geometry::Difference);
     NODE_SET_PROTOTYPE_METHOD(constructor, "symDifference", Geometry::SymDifference);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "distance", Geometry::Distance);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isWithinDistance", Geometry::IsWithinDistance);
+
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
 
@@ -69,6 +72,21 @@ Handle<Value> Geometry::ToString(const Arguments& args) {
     HandleScope scope;
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     return scope.Close(String::New(geom->_geom->toString().data()));
+}
+
+Handle<Value> Geometry::Distance(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+    return scope.Close(Number::New(geom->_geom->distance(geom2->_geom)));
+}
+
+Handle<Value> Geometry::IsWithinDistance(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+    double distance = args[0]->NumberValue();
+    return geom->_geom->isWithinDistance(geom2->_geom, distance) ? True() : False();
 }
 
 //GEOS unary predicates

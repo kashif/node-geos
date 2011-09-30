@@ -75,4 +75,16 @@ tests = (vows.describe "Geometry").addBatch
       assert.isFunction geom.symDifference
       assert.equal (geom.symDifference geom).toString(), "GEOMETRYCOLLECTION EMPTY"
 
+    "should have a distance function": (geom) ->
+      assert.isFunction geom.distance
+      assert.equal (geom.distance geom), 0
+
+    "should have a distance function": (geom) ->
+      assert.isFunction geom.distance
+      assert.equal (geom.distance geom), 0
+
+    "should have a isWithinDistance": (geom) ->
+      assert.isFunction geom.isWithinDistance
+      assert.ok geom.isWithinDistance geom, 10
+
 tests.export module
