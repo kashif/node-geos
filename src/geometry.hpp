@@ -29,6 +29,15 @@
         }                                                                   \
     };                                                                      \
 
+#define NODE_GEOS_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)                     \
+    Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
+        HandleScope scope;                                                      \
+        Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
+        Geometry *geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());    \
+        geos::geom::Geometry* result = geom->_geom->geosmethod(geom2->_geom);   \
+        return scope.Close(Geometry::New(result));                              \
+    }                                                                           \
+
 class Geometry : public ObjectWrap {
  public:
     geos::geom::Geometry* _geom;
@@ -57,6 +66,11 @@ class Geometry : public ObjectWrap {
     static Handle<Value> Covers(const Arguments& args);
     static Handle<Value> CoveredBy(const Arguments& args);
 
+    // GEOS topologic function
+    static Handle<Value> Intersection(const Arguments& args);
+    static Handle<Value> Union(const Arguments& args);
+    static Handle<Value> Difference(const Arguments& args);
+    static Handle<Value> SymDifference(const Arguments& args);
     //static Handle<Value> EqualsExact(const Arguments& args);
 
  private:

@@ -61,4 +61,18 @@ tests = (vows.describe "Geometry").addBatch
       assert.isFunction geom.coveredBy
       assert.ok not geom.disjoint geom
 
+    #topologic functions
+    "should have a intersection function": (geom) ->
+      assert.isFunction geom.intersection
+      assert.ok (geom.intersection geom).equals geom
+    #"should have a union function": (geom) ->
+    #  assert.isFunction geom.union
+    "should have a difference function": (geom) ->
+      assert.isFunction geom.difference
+      #TODO use real geometries
+      assert.equal (geom.difference geom).toString(), "GEOMETRYCOLLECTION EMPTY"
+    "should have a symDifference function": (geom) ->
+      assert.isFunction geom.symDifference
+      assert.equal (geom.symDifference geom).toString(), "GEOMETRYCOLLECTION EMPTY"
+
 tests.export module

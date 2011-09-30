@@ -39,6 +39,12 @@ void Geometry::Initialize(Handle<Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor, "covers", Geometry::Covers);
     NODE_SET_PROTOTYPE_METHOD(constructor, "coveredBy", Geometry::CoveredBy);
 
+    //GEOS topologic function
+    NODE_SET_PROTOTYPE_METHOD(constructor, "intersection", Geometry::Intersection);
+    //NODE_SET_PROTOTYPE_METHOD(constructor, "union", Geometry::Union);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "difference", Geometry::Difference);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "symDifference", Geometry::SymDifference);
+
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
 
@@ -83,4 +89,8 @@ NODE_GEOS_BINARY_PREDICATE(Equals, equals);
 NODE_GEOS_BINARY_PREDICATE(Covers, covers);
 NODE_GEOS_BINARY_PREDICATE(CoveredBy, coveredBy);
 
-
+// GEOS topologic functions
+NODE_GEOS_TOPOLOGIC_FUNCTION(Intersection, intersection);
+//NODE_GEOS_TOPOLOGIC_FUNCTION(Union, union); TODO fix the keyword problem
+NODE_GEOS_TOPOLOGIC_FUNCTION(Difference, difference);
+NODE_GEOS_TOPOLOGIC_FUNCTION(SymDifference, symDifference);
