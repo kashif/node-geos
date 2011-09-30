@@ -87,4 +87,13 @@ tests = (vows.describe "Geometry").addBatch
       assert.isFunction geom.isWithinDistance
       assert.ok geom.isWithinDistance geom, 10
 
+    "should have a getEnvelope function": (geom) ->
+      assert.isFunction geom.getEnvelope
+      assert.equal geom.getEnvelope().toString(), "POINT (1.0000000000000000 1.0000000000000000)"
+
+    "should return a vaild envelope for a linestring": (geom) ->
+      geom = (new WKTReader()).read "LINESTRING (0 0, 1 1)"
+      #TODO remove this ugly wkt
+      assert.equal geom.getEnvelope().toString(), "POLYGON ((0.0000000000000000 0.0000000000000000, 1.0000000000000000 0.0000000000000000, 1.0000000000000000 1.0000000000000000, 0.0000000000000000 1.0000000000000000, 0.0000000000000000 0.0000000000000000))"
+
 tests.export module
