@@ -3,6 +3,7 @@
 #include "wktwriter.hpp"
 #include "geometry.hpp"
 #include "geometryfactory.hpp"
+#include "precisionmodel.hpp"
 
 extern "C"
 void init (Handle<Object> target) {
@@ -14,5 +15,6 @@ void init (Handle<Object> target) {
     WKTReader::Initialize(target);
     WKTWriter::Initialize(target);
     GeometryFactory::Initialize(target);
+    PrecisionModel::Initialize(target);
 
 }
