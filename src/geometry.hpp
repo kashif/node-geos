@@ -37,7 +37,7 @@
         return scope.Close(Geometry::New(result));                              \
     }                                                                           \
 
-#define NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)                     \
+#define NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)              \
     Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
         HandleScope scope;                                                      \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
