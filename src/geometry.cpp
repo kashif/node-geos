@@ -39,14 +39,22 @@ void Geometry::Initialize(Handle<Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor, "covers", Geometry::Covers);
     NODE_SET_PROTOTYPE_METHOD(constructor, "coveredBy", Geometry::CoveredBy);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isWithinDistance", Geometry::IsWithinDistance);
+
     //GEOS topologic function
     NODE_SET_PROTOTYPE_METHOD(constructor, "intersection", Geometry::Intersection);
     //NODE_SET_PROTOTYPE_METHOD(constructor, "union", Geometry::Union);
     NODE_SET_PROTOTYPE_METHOD(constructor, "difference", Geometry::Difference);
     NODE_SET_PROTOTYPE_METHOD(constructor, "symDifference", Geometry::SymDifference);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getEnvelope", Geometry::GetEnvelope);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getBoundary", Geometry::GetBoundary);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "convexHull", Geometry::ConvexHull);
+
+    NODE_SET_PROTOTYPE_METHOD(constructor, "buffer", Geometry::Buffer);
+
     NODE_SET_PROTOTYPE_METHOD(constructor, "distance", Geometry::Distance);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "isWithinDistance", Geometry::IsWithinDistance);
+
 
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
@@ -89,6 +97,29 @@ Handle<Value> Geometry::IsWithinDistance(const Arguments& args) {
     return geom->_geom->isWithinDistance(geom2->_geom, distance) ? True() : False();
 }
 
+Handle<Value> Geometry::Buffer(const Arguments& args) {
+    HandleScope scope;
+    double distance;
+    int quadrantSegments;
+    Handle<Value> result;
+
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    distance = args[0]->NumberValue();
+
+    if (args.Length() == 1) {
+        result = Geometry::New(geom->_geom->buffer(distance));
+    } else if (args.Length() == 2) {
+        quadrantSegments = args[1]->IntegerValue();
+        result = Geometry::New(geom->_geom->buffer(distance, quadrantSegments));
+    } else {
+        quadrantSegments = args[1]->IntegerValue();
+        int endCapStyle = args[2]->IntegerValue();
+        result = Geometry::New(geom->_geom->buffer(distance, quadrantSegments, endCapStyle));
+    }
+
+    return scope.Close(result);
+}
+
 //GEOS unary predicates
 NODE_GEOS_UNARY_PREDICATE(IsSimple, isSimple);
 NODE_GEOS_UNARY_PREDICATE(IsValid, isValid);
@@ -107,8 +138,13 @@ NODE_GEOS_BINARY_PREDICATE(Equals, equals);
 NODE_GEOS_BINARY_PREDICATE(Covers, covers);
 NODE_GEOS_BINARY_PREDICATE(CoveredBy, coveredBy);
 
-// GEOS topologic functions
-NODE_GEOS_TOPOLOGIC_FUNCTION(Intersection, intersection);
+// GEOS unary topologic functions
+NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(GetEnvelope, getEnvelope);
+NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(GetBoundary, getBoundary);
+NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(ConvexHull, convexHull);
+
+// GEOS binary topologic functions
+NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(Intersection, intersection);
 //NODE_GEOS_TOPOLOGIC_FUNCTION(Union, union); TODO fix the keyword problem
-NODE_GEOS_TOPOLOGIC_FUNCTION(Difference, difference);
-NODE_GEOS_TOPOLOGIC_FUNCTION(SymDifference, symDifference);
+NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(Difference, difference);
+NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(SymDifference, symDifference);

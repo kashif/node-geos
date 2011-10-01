@@ -29,7 +29,15 @@
         }                                                                   \
     };                                                                      \
 
-#define NODE_GEOS_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)                     \
+#define NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)               \
+    Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
+        HandleScope scope;                                                      \
+        Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
+        geos::geom::Geometry* result = geom->_geom->geosmethod();               \
+        return scope.Close(Geometry::New(result));                              \
+    }                                                                           \
+
+#define NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)                     \
     Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
         HandleScope scope;                                                      \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
@@ -66,15 +74,23 @@ class Geometry : public ObjectWrap {
     static Handle<Value> Covers(const Arguments& args);
     static Handle<Value> CoveredBy(const Arguments& args);
 
+    //static Handle<Value> EqualsExact(const Arguments& args);
+    static Handle<Value> IsWithinDistance(const Arguments& args);
+
     // GEOS topologic function
     static Handle<Value> Intersection(const Arguments& args);
     static Handle<Value> Union(const Arguments& args);
     static Handle<Value> Difference(const Arguments& args);
     static Handle<Value> SymDifference(const Arguments& args);
-    //static Handle<Value> EqualsExact(const Arguments& args);
+
+    static Handle<Value> GetBoundary(const Arguments& args);
+    static Handle<Value> GetEnvelope(const Arguments& args);
+    static Handle<Value> ConvexHull(const Arguments& args);
+
+    static Handle<Value> Buffer(const Arguments& args);
 
     static Handle<Value> Distance(const Arguments& args);
-    static Handle<Value> IsWithinDistance(const Arguments& args);
+
 
  private:
     static Persistent<FunctionTemplate> constructor;

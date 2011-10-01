@@ -120,4 +120,13 @@ tests = (vows.describe "Geometry").addBatch
       #TODO stupid test!?!
       assert.equal (geom.buffer 1.0, 2, 1).toString(), "POLYGON ((2.0000000000000000 1.0000000000000000, 1.7071067811865481 0.2928932188134531, 1.0000000000000016 0.0000000000000000, 0.2928932188134541 0.2928932188134509, 0.0000000000000000 0.9999999999999968, 0.2928932188134495 1.7071067811865446, 0.9999999999999953 2.0000000000000000, 1.7071067811865435 1.7071067811865515, 2.0000000000000000 1.0000000000000000))"
 
+    "should have a convexHull function": (geom) ->
+      assert.isFunction geom.convexHull
+      assert.ok geom.convexHull().equals geom
+
+    "should return a valid convexHull for a linestring": ->
+      #TODO change geometry
+      geom = (new WKTReader()).read "LINESTRING (0 0, 1 1)"
+      assert.equal geom.convexHull().toString(), "LINESTRING (0.0000000000000000 0.0000000000000000, 1.0000000000000000 1.0000000000000000)"
+
 tests.export module
