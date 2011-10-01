@@ -41,12 +41,13 @@ void Geometry::Initialize(Handle<Object> target)
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "isWithinDistance", Geometry::IsWithinDistance);
 
-    //GEOS topologic function
+    //GEOS binary topologic functions
     NODE_SET_PROTOTYPE_METHOD(constructor, "intersection", Geometry::Intersection);
     //NODE_SET_PROTOTYPE_METHOD(constructor, "union", Geometry::Union);
     NODE_SET_PROTOTYPE_METHOD(constructor, "difference", Geometry::Difference);
     NODE_SET_PROTOTYPE_METHOD(constructor, "symDifference", Geometry::SymDifference);
 
+    //GEOS unary topologic functions
     NODE_SET_PROTOTYPE_METHOD(constructor, "getEnvelope", Geometry::GetEnvelope);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getBoundary", Geometry::GetBoundary);
     NODE_SET_PROTOTYPE_METHOD(constructor, "convexHull", Geometry::ConvexHull);
@@ -55,6 +56,10 @@ void Geometry::Initialize(Handle<Object> target)
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "distance", Geometry::Distance);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getArea", Geometry::GetArea);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getLength", Geometry::GetLength);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getSRID", Geometry::GetSRID);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "setSRID", Geometry::SetSRID);
 
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
@@ -95,6 +100,13 @@ Handle<Value> Geometry::IsWithinDistance(const Arguments& args) {
     Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     double distance = args[0]->NumberValue();
     return geom->_geom->isWithinDistance(geom2->_geom, distance) ? True() : False();
+}
+
+Handle<Value> Geometry::SetSRID(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    geom->_geom->setSRID(args[0]->IntegerValue());
+    return Undefined();
 }
 
 Handle<Value> Geometry::Buffer(const Arguments& args) {
@@ -148,3 +160,7 @@ NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(Intersection, intersection);
 //NODE_GEOS_TOPOLOGIC_FUNCTION(Union, union); TODO fix the keyword problem
 NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(Difference, difference);
 NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(SymDifference, symDifference);
+
+NODE_GEOS_DOUBLE_GETTER(GetArea, getArea);
+NODE_GEOS_DOUBLE_GETTER(GetLength, getLength);
+NODE_GEOS_DOUBLE_GETTER(GetSRID, getSRID);

@@ -14,7 +14,7 @@ tests = (vows.describe "Geometry").addBatch
       new WKTWriter()
 
     "a new instance should be an instance of WKTWriter": (writer) ->
-      assert.ok writer instanceof WKTWriter
+      assert.instanceOf writer, WKTWriter
 
     "should have a write function": (writer) ->
       assert.isFunction writer.write

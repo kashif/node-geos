@@ -13,14 +13,14 @@ tests = (vows.describe "WKTReader").addBatch
       new WKTReader()
 
     "a new instance should be an instance of WKTReader": (reader) ->
-      assert.ok reader instanceof WKTReader
+      assert.instanceOf reader, WKTReader
 
     "should have a read function": (reader) ->
       assert.isFunction reader.read
 
     "should read a WKT POINT(1 1)": (reader) ->
       geom = reader.read "POINT(1 1)"
-      assert.ok geom instanceof Geometry
+      assert.instanceOf geom, Geometry
       assert.equal geom.toString(), "POINT (1.0000000000000000 1.0000000000000000)"
 
 

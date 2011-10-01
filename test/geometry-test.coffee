@@ -13,7 +13,7 @@ tests = (vows.describe "Geometry").addBatch
       (new WKTReader()).read "POINT(1 1)"
 
     "a new instance should be an instance of Geometry": (geom) ->
-      assert.ok geom instanceof Geometry
+      assert.instanceOf geom, Geometry
 
     "should have a toString function" : (geom) ->
       assert.isFunction geom.toString
@@ -128,5 +128,22 @@ tests = (vows.describe "Geometry").addBatch
       #TODO change geometry
       geom = (new WKTReader()).read "LINESTRING (0 0, 1 1)"
       assert.equal geom.convexHull().toString(), "LINESTRING (0.0000000000000000 0.0000000000000000, 1.0000000000000000 1.0000000000000000)"
+
+    "should have a getArea function": (geom) ->
+      assert.isFunction geom.getArea
+      assert.equal geom.getArea(), 0
+
+    "should have a getLength function": (geom) ->
+      assert.isFunction geom.getLength
+      assert.equal geom.getLength(), 0
+
+    "should have a getSRID function": (geom) ->
+      assert.isFunction geom.getSRID
+      assert.equal geom.getSRID(), 0
+
+    "should have a setSRID function": (geom) ->
+      assert.isFunction geom.setSRID
+      assert.equal undefined, geom.setSRID 4326
+      assert.equal geom.getSRID(), 4326
 
 tests.export module

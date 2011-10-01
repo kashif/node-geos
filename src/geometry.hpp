@@ -46,6 +46,13 @@
         return scope.Close(Geometry::New(result));                              \
     }                                                                           \
 
+#define NODE_GEOS_DOUBLE_GETTER(cppmethod, geosmethod)                          \
+    Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
+        HandleScope scope;                                                      \
+        Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
+        return scope.Close(Number::New(geom->_geom->geosmethod()));             \
+    }                                                                           \
+
 class Geometry : public ObjectWrap {
  public:
     geos::geom::Geometry* _geom;
@@ -91,6 +98,11 @@ class Geometry : public ObjectWrap {
 
     static Handle<Value> Distance(const Arguments& args);
 
+    static Handle<Value> GetArea(const Arguments& args);
+    static Handle<Value> GetLength(const Arguments& args);
+
+    static Handle<Value> GetSRID(const Arguments& args);
+    static Handle<Value> SetSRID(const Arguments& args);
 
  private:
     static Persistent<FunctionTemplate> constructor;
