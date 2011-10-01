@@ -2,6 +2,7 @@
 #include "wktreader.hpp"
 #include "wktwriter.hpp"
 #include "geometry.hpp"
+#include "geometryfactory.hpp"
 
 extern "C"
 void init (Handle<Object> target) {
@@ -12,5 +13,6 @@ void init (Handle<Object> target) {
     Geometry::Initialize(target);
     WKTReader::Initialize(target);
     WKTWriter::Initialize(target);
+    GeometryFactory::Initialize(target);
 
 }
