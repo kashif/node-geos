@@ -15,7 +15,9 @@ class Quadtree : public ObjectWrap {
         static Persistent<FunctionTemplate> constructor;
         static Handle<Value> New(const Arguments& args);
         static Handle<Value> Insert(const Arguments& args);
+        static Handle<Value> Remove(const Arguments& args);
         static Handle<Value> QueryAll(const Arguments& args);
+        static Handle<Value> Query(const Arguments& args);
 
     protected:
 
