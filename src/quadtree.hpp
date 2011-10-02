@@ -3,6 +3,7 @@
 
 #include "binding.hpp"
 #include "quadtree.hpp"
+#include "geometry.hpp"
 
 #include "geos/index/quadtree/Quadtree.h"
 
@@ -13,6 +14,8 @@ class Quadtree : public ObjectWrap {
         static void Initialize(Handle<Object> target);
         static Persistent<FunctionTemplate> constructor;
         static Handle<Value> New(const Arguments& args);
+        static Handle<Value> Insert(const Arguments& args);
+        static Handle<Value> QueryAll(const Arguments& args);
 
     protected:
 
