@@ -24,6 +24,11 @@ tests = (vows.describe "GeometryFactory").addBatch
     "a new instance should be an instance of GeometryFactory": (factory) ->
       assert.instanceOf factory, GeometryFactory
 
+# TODO segfault/see explicit cast in c++ code
+#    "the getPrecisionModel should return a valid PrecisionModel": (factory) ->
+#      assert.isFunction factory.getPrecisionModel
+#      assert.equal factory.getPrecisionModel().comapreTo(new PrecisionModel())
+
   "A GeometryFactory with different PrecisionModel and new SRID":
     topic: ->
       new GeometryFactory(new PrecisionModel(), 4326)

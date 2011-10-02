@@ -23,6 +23,7 @@ void GeometryFactory::Initialize(Handle<Object> target) {
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(String::NewSymbol("GeometryFactory"));
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getPrecisionModel", GetPrecisionModel);
 
     target->Set(String::NewSymbol("GeometryFactory"), constructor->GetFunction());
 }
@@ -42,4 +43,10 @@ Handle<Value> GeometryFactory::New(const Arguments& args) {
     }
     factory->Wrap(args.This());
     return args.This();
+}
+
+Handle<Value> GeometryFactory::GetPrecisionModel(const Arguments& args) {
+    HandleScope scope;
+    GeometryFactory* factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
+    return scope.Close(PrecisionModel::New(factory->_factory->getPrecisionModel()));
 }

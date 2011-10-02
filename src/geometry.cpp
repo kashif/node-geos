@@ -3,7 +3,7 @@
 Geometry::Geometry() {
 }
 
-Geometry::Geometry(geos::geom::Geometry* geom) : ObjectWrap() {
+Geometry::Geometry(geos::geom::Geometry *geom) : ObjectWrap() {
     _geom = geom;
 }
 Geometry::~Geometry()

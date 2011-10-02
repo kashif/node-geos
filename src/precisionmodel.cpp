@@ -11,6 +11,9 @@ PrecisionModel::PrecisionModel(double newScale) {
 PrecisionModel::PrecisionModel(geos::geom::PrecisionModel::Type nModelType) {
     _model = new geos::geom::PrecisionModel(nModelType);
 }
+PrecisionModel::PrecisionModel(const geos::geom::PrecisionModel *model) {
+    _model = (geos::geom::PrecisionModel*) model; //hacky
+}
 
 PrecisionModel::~PrecisionModel() {}
 
@@ -31,6 +34,8 @@ void PrecisionModel::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "isFloating", IsFloating);
+
+    NODE_SET_PROTOTYPE_METHOD(constructor, "compareTo", CompareTo);
 
     target->Set(String::NewSymbol("PrecisionModel"), constructor->GetFunction());
 }
@@ -57,6 +62,15 @@ Handle<Value> PrecisionModel::New(const Arguments& args) {
     }
     model->Wrap(args.This());
     return args.This();
+}
+
+Handle<Value> PrecisionModel::New(const geos::geom::PrecisionModel *m) {
+    HandleScope scope;
+    PrecisionModel *model = new PrecisionModel(m);
+    Handle<Value> ext = External::New(model);
+    Handle<Object> obj = constructor->GetFunction()->NewInstance(1, &ext);
+    model->Wrap(obj);
+    return scope.Close(obj);
 }
 
 Handle<Value> PrecisionModel::GetType(const Arguments& args) {
@@ -93,4 +107,11 @@ Handle<Value> PrecisionModel::IsFloating(const Arguments& args) {
     HandleScope scope;
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
     return model->_model->isFloating() ? True() : False();
+}
+
+Handle<Value> PrecisionModel::CompareTo(const Arguments& args) {
+    HandleScope scope;
+    PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
+    PrecisionModel *model2 = ObjectWrap::Unwrap<PrecisionModel>(args[0]->ToObject());
+    return scope.Close(Integer::New(model->_model->compareTo(model2->_model)));
 }

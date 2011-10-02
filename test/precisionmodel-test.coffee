@@ -40,6 +40,10 @@ tests = (vows.describe "PrecisionModel").addBatch
       assert.isFunction model.isFloating
       assert.isTrue model.isFloating()
 
+    "compared with it self": (model) ->
+      assert.isFunction model.compareTo
+      assert.equal model.compareTo(model), 0
+
   "A PrecisionModel with precision FIXED":
     topic: ->
       new PrecisionModel("FIXED")

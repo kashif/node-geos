@@ -18,6 +18,8 @@ class GeometryFactory : public ObjectWrap {
         static Persistent<FunctionTemplate> constructor;
         static Handle<Value> New(const Arguments& args);
 
+        static Handle<Value> GetPrecisionModel(const Arguments& args);
+
     protected:
 
     private:
