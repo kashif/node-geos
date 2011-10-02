@@ -4,6 +4,7 @@
 #include "geometry.hpp"
 #include "geometryfactory.hpp"
 #include "precisionmodel.hpp"
+#include "quadtree.hpp"
 
 extern "C"
 void init (Handle<Object> target) {
@@ -16,5 +17,6 @@ void init (Handle<Object> target) {
     WKTWriter::Initialize(target);
     GeometryFactory::Initialize(target);
     PrecisionModel::Initialize(target);
+    Quadtree::Initialize(target);
 
 }
