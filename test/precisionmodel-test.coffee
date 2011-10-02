@@ -36,6 +36,10 @@ tests = (vows.describe "PrecisionModel").addBatch
       assert.isFunction model.toString
       assert.equal model.toString(), "Floating"
 
+    "the isFloating function should return": (model) ->
+      assert.isFunction model.isFloating
+      assert.isTrue model.isFloating()
+
   "A PrecisionModel with precision FIXED":
     topic: ->
       new PrecisionModel("FIXED")
@@ -46,6 +50,10 @@ tests = (vows.describe "PrecisionModel").addBatch
     "the toString function should return": (model) ->
       assert.equal model.toString(), "Fixed (Scale=1 OffsetX=0 OffsetY=0)"
 
+    "the isFloating function should return": (model) ->
+      assert.isFunction model.isFloating
+      assert.isFalse model.isFloating()
+
   "A PrecisionModel with precision SINGLE_FLOATING":
     topic: ->
       new PrecisionModel("SINGLE_FLOATING")
@@ -55,6 +63,10 @@ tests = (vows.describe "PrecisionModel").addBatch
 
     "the toString function should return": (model) ->
       assert.equal model.toString(), "Floating-Single"
+
+    "the isFloating function should return": (model) ->
+      assert.isFunction model.isFloating
+      assert.isTrue model.isFloating()
 
   "A PrecisionModel with a different scale factor":
     topic: ->

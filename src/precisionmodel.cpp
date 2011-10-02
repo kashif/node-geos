@@ -30,6 +30,8 @@ void PrecisionModel::Initialize(Handle<Object> target) {
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "isFloating", IsFloating);
+
     target->Set(String::NewSymbol("PrecisionModel"), constructor->GetFunction());
 }
 
@@ -85,4 +87,10 @@ Handle<Value> PrecisionModel::ToString(const Arguments& args) {
     HandleScope scope;
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
     return scope.Close(String::New(model->_model->toString().data()));
+}
+
+Handle<Value> PrecisionModel::IsFloating(const Arguments& args) {
+    HandleScope scope;
+    PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
+    return model->_model->isFloating() ? True() : False();
 }

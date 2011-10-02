@@ -20,6 +20,8 @@ class PrecisionModel : public ObjectWrap {
         static Handle<Value> GetOffsetX(const Arguments& args);
         static Handle<Value> GetOffsetY(const Arguments& args);
         static Handle<Value> ToString(const Arguments& args);
+        static Handle<Value> IsFloating(const Arguments& args);
+
     protected:
 
     private:
