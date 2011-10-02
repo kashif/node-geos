@@ -19,7 +19,7 @@ class PrecisionModel : public ObjectWrap {
         static Handle<Value> GetScale(const Arguments& args);
         static Handle<Value> GetOffsetX(const Arguments& args);
         static Handle<Value> GetOffsetY(const Arguments& args);
-
+        static Handle<Value> ToString(const Arguments& args);
     protected:
 
     private:

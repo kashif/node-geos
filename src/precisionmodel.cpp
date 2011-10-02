@@ -28,6 +28,8 @@ void PrecisionModel::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "getOffsetX", GetOffsetX);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getOffsetY", GetOffsetY);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
+
     target->Set(String::NewSymbol("PrecisionModel"), constructor->GetFunction());
 }
 
@@ -60,7 +62,7 @@ Handle<Value> PrecisionModel::GetType(const Arguments& args) {
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
     return scope.Close(Integer::New(model->_model->getType()));
 }
-
+//TODO add a macro for this?
 Handle<Value> PrecisionModel::GetScale(const Arguments& args) {
     HandleScope scope;
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
@@ -77,4 +79,10 @@ Handle<Value> PrecisionModel::GetOffsetY(const Arguments& args) {
     HandleScope scope;
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
     return scope.Close(Number::New(model->_model->getOffsetY()));
+}
+
+Handle<Value> PrecisionModel::ToString(const Arguments& args) {
+    HandleScope scope;
+    PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
+    return scope.Close(String::New(model->_model->toString().data()));
 }
