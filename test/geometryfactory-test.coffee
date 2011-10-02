@@ -36,4 +36,8 @@ tests = (vows.describe "GeometryFactory").addBatch
     "a new instance should be an instance of GeometryFactory": (factory) ->
       assert.instanceOf factory, GeometryFactory
 
+    "its SRID should be 4326": (factory) ->
+      assert.isFunction factory.getSRID
+      assert.equal factory.getSRID(), 4326
+
 tests.export module

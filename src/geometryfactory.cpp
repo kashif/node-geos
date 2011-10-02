@@ -24,6 +24,7 @@ void GeometryFactory::Initialize(Handle<Object> target) {
     constructor->SetClassName(String::NewSymbol("GeometryFactory"));
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "getPrecisionModel", GetPrecisionModel);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getSRID", GetSRID);
 
     target->Set(String::NewSymbol("GeometryFactory"), constructor->GetFunction());
 }
@@ -45,8 +46,14 @@ Handle<Value> GeometryFactory::New(const Arguments& args) {
     return args.This();
 }
 
+Handle<Value> GeometryFactory::GetSRID(const Arguments& args) {
+    HandleScope scope;
+    GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
+    return scope.Close(Integer::New(factory->_factory->getSRID()));
+}
+
 Handle<Value> GeometryFactory::GetPrecisionModel(const Arguments& args) {
     HandleScope scope;
-    GeometryFactory* factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
+    GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
     return scope.Close(PrecisionModel::New(factory->_factory->getPrecisionModel()));
 }
