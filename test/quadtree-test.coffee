@@ -8,6 +8,7 @@ Geometry = (require "../geos").Geometry
 Quadtree = (require "../geos").Quadtree
 
 geom = (new WKTReader()).read "POINT (1 1)"
+item = null
 
 tests = (vows.describe "Quadtree").addBatch
 
@@ -20,28 +21,24 @@ tests = (vows.describe "Quadtree").addBatch
 
     "should have a insert function": (tree) ->
       assert.isFunction tree.insert
-      assert.isUndefined tree.insert geom, "key"
+      assert.isUndefined tree.insert geom, 1
 
     "should have a queryAll function": (tree) ->
       assert.isFunction tree.queryAll
       r = tree.queryAll()
       assert.isArray r
-      assert.instanceOf r[0].geom, Geometry
-      assert.equal r[0].geom.toString(), "POINT (1.0000000000000000 1.0000000000000000)"
-      assert.equal r[0].key, "key"
-
-    #broken...
-    #"should have a remove function": (tree) ->
-    #  assert.isFunction tree.remove
-    #  assert.isTrue tree.remove geom, "key"
+      assert.equal r[0], 1
 
     "shoudl have a query function": (tree) ->
       assert.isFunction tree.query
       r = tree.query geom
       assert.isArray r
-      assert.instanceOf r[0].geom, Geometry
-      assert.equal r[0].geom.toString(), "POINT (1.0000000000000000 1.0000000000000000)"
-      assert.equal r[0].key, "key"
+      assert.equal r[0], 1
+
+    "should have a remove function": (tree) ->
+      assert.isFunction tree.remove
+      assert.isTrue tree.remove geom, 1
+
 
 
 tests.export module

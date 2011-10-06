@@ -7,6 +7,21 @@
 
 #include "geos/index/quadtree/Quadtree.h"
 
+class Item : public ObjectWrap {
+    public:
+        Item(std::string k, geos::geom::Geometry *geom);
+        ~Item();
+        Item();
+        static void Initialize(Handle<Object> target);
+        static Handle<Value> New(std::string k, geos::geom::Geometry *geom);
+        static Handle<Value> New(Item *item);
+        static Handle<Value> New(const Arguments& args);
+        static Persistent<FunctionTemplate> constructor;
+        geos::geom::Geometry *_geom;
+        std::string _key;
+
+};
+
 class Quadtree : public ObjectWrap {
     public:
         Quadtree();
