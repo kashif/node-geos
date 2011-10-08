@@ -39,6 +39,11 @@ tests = (vows.describe "Quadtree").addBatch
       assert.isFunction tree.remove
       assert.isTrue tree.remove geom, 1
 
+    "should handle big integers": (tree) ->
+      #max key size is Math.pow 2, 30
+      tree.insert geom, Math.pow 2, 30
+      assert.deepEqual tree.queryAll(), [Math.pow 2, 30]
+
 
 
 tests.export module
