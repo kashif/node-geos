@@ -44,6 +44,11 @@ tests = (vows.describe "Quadtree").addBatch
       tree.insert geom, Math.pow 2, 30
       assert.deepEqual tree.queryAll(), [Math.pow 2, 30]
 
+    "should have an async query function": (tree) ->
+      tree.query geom, (error, result) ->
+        assert.isArray result
+        assert.isNull error
+
 
 
 tests.export module
