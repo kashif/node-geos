@@ -2,6 +2,8 @@
 #define WKTREADER_HPP
 
 #include <geos/io/WKTReader.h>
+#include <geos/io/ParseException.h>
+
 #include "binding.hpp"
 #include "geometry.hpp"
 

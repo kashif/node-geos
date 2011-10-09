@@ -33,9 +33,12 @@ Handle<Value> WKTReader::Read(const Arguments& args)
 {
     HandleScope scope;
     WKTReader* reader = ObjectWrap::Unwrap<WKTReader>(args.This());
-    //catch exception
-    geos::geom::Geometry* geom = reader->_reader->read(*String::Utf8Value(args[0]->ToString()));
-
-
-    return scope.Close(Geometry::New(geom));
+    try {
+        geos::geom::Geometry* geom = reader->_reader->read(*String::Utf8Value(args[0]->ToString()));
+        return scope.Close(Geometry::New(geom));
+    } catch (geos::io::ParseException e) {
+        return ThrowException(Exception::Error(String::New(e.what())));
+    } catch (...) {
+        return ThrowException(Exception::Error(String::New("Exception while reading WKT.")));
+    }
 }
