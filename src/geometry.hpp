@@ -104,6 +104,8 @@ class Geometry : public ObjectWrap {
     static Handle<Value> GetSRID(const Arguments& args);
     static Handle<Value> SetSRID(const Arguments& args);
 
+    static Handle<Value> GetGeometryType(const Arguments& args);
+
  private:
     static Persistent<FunctionTemplate> constructor;
     static Handle<Value> ToString(const Arguments& args);

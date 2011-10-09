@@ -4,6 +4,10 @@ WKTReader::WKTReader() {
     _reader = new geos::io::WKTReader();
 }
 
+WKTReader::WKTReader(const geos::geom::GeometryFactory *gf) {
+    _reader = new geos::io::WKTReader(gf);
+}
+
 WKTReader::~WKTReader() {}
 
 Persistent<FunctionTemplate> WKTReader::constructor;
@@ -24,7 +28,15 @@ void WKTReader::Initialize(Handle<Object> target)
 Handle<Value> WKTReader::New(const Arguments& args)
 {
     HandleScope scope;
-    WKTReader* wktReader = new WKTReader();
+    WKTReader *wktReader;
+
+    if(args.Length() == 1) {
+        GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args[0]->ToObject());
+        wktReader = new WKTReader(factory->_factory);
+    } else {
+        wktReader = new WKTReader();
+    }
+
     wktReader->Wrap(args.This());
     return args.This();
 }

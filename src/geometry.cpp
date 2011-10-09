@@ -61,6 +61,8 @@ void Geometry::Initialize(Handle<Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor, "getSRID", Geometry::GetSRID);
     NODE_SET_PROTOTYPE_METHOD(constructor, "setSRID", Geometry::SetSRID);
 
+    NODE_SET_PROTOTYPE_METHOD(constructor, "getGeometryType", Geometry::GetGeometryType);
+
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
 
@@ -85,6 +87,12 @@ Handle<Value> Geometry::ToString(const Arguments& args) {
     HandleScope scope;
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     return scope.Close(String::New(geom->_geom->toString().data()));
+}
+
+Handle<Value> Geometry::GetGeometryType(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    return scope.Close(String::New(geom->_geom->getGeometryType().data()));
 }
 
 Handle<Value> Geometry::Distance(const Arguments& args) {

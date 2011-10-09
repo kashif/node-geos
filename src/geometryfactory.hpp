@@ -10,10 +10,13 @@
 class GeometryFactory : public ObjectWrap {
 
     public:
+        geos::geom::GeometryFactory* _factory;
+
         GeometryFactory();
         GeometryFactory(const geos::geom::PrecisionModel *pm);
         GeometryFactory(const geos::geom::PrecisionModel *pm, int newSRID);
         ~GeometryFactory();
+
         static void Initialize(Handle<Object> target);
         static Persistent<FunctionTemplate> constructor;
         static Handle<Value> New(const Arguments& args);
@@ -24,7 +27,6 @@ class GeometryFactory : public ObjectWrap {
     protected:
 
     private:
-        geos::geom::GeometryFactory* _factory;
 
 };
 #endif

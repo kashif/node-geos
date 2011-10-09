@@ -146,4 +146,9 @@ tests = (vows.describe "Geometry").addBatch
       assert.equal undefined, geom.setSRID 4326
       assert.equal geom.getSRID(), 4326
 
+    "should have a getGeometryType function": (geom) ->
+      assert.isFunction geom.getGeometryType
+      assert.isString geom.getGeometryType()
+      assert.equal geom.getGeometryType(), "Point"
+
 tests.export module
