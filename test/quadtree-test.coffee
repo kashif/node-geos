@@ -53,6 +53,10 @@ tests = (vows.describe "Quadtree").addBatch
       assert.isFunction tree.size
       assert.equal tree.size(), 1
 
+    "should have a depth function": (tree) ->
+      assert.isFunction tree.depth
+      assert.equal tree.depth(), 3
+
 
 
 tests.export module

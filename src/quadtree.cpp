@@ -21,6 +21,7 @@ void Quadtree::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(Quadtree::constructor, "query", Query);
 
     NODE_SET_PROTOTYPE_METHOD(Quadtree::constructor, "size", Size);
+    NODE_SET_PROTOTYPE_METHOD(Quadtree::constructor, "depth", Depth);
 
     target->Set(String::NewSymbol("Quadtree"), Quadtree::constructor->GetFunction());
 
@@ -37,6 +38,12 @@ Handle<Value> Quadtree::Size(const Arguments& args) {
     HandleScope scope;
     Quadtree *quadtree = ObjectWrap::Unwrap<Quadtree>(args.This());
     return scope.Close(Integer::New(quadtree->_quadtree->size()));
+}
+
+Handle<Value> Quadtree::Depth(const Arguments& args) {
+    HandleScope scope;
+    Quadtree *quadtree = ObjectWrap::Unwrap<Quadtree>(args.This());
+    return scope.Close(Integer::New(quadtree->_quadtree->depth()));
 }
 
 //TODO add async
