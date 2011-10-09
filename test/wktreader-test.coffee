@@ -5,6 +5,8 @@ assert = require "assert"
 
 WKTReader = (require "../geos").WKTReader
 Geometry = (require "../geos").Geometry
+GeometryFactory = (require "../geos").GeometryFactory
+PrecisionModel = (require "../geos").PrecisionModel
 
 tests = (vows.describe "WKTReader").addBatch
 
@@ -25,5 +27,21 @@ tests = (vows.describe "WKTReader").addBatch
 
     "should throw an exception on malformed WKT": (reader) ->
       assert.throws reader.read, Error
+
+  "A WKTReader with non standard GeometryFactory":
+    topic: ->
+      new WKTReader new GeometryFactory new PrecisionModel "FIXED"
+
+    "a new instance should be an instance of WKTReader": (reader) ->
+      assert.instanceOf reader, WKTReader
+
+    "should have a read function": (reader) ->
+      assert.isFunction reader.read
+
+    "should read a WKT POINT(1 1)": (reader) ->
+      geom = reader.read "POINT(1 1)"
+      assert.instanceOf geom, Geometry
+      assert.equal geom.toString(), "POINT (1.0 1.0)"
+
 
 tests.export module
