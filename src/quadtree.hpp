@@ -27,6 +27,8 @@ class Quadtree : public ObjectWrap {
         static int EIO_Query(eio_req *req);
         static int EIO_AfterQuery(eio_req *req);
 
+        static Handle<Value> Size(const Arguments& args);
+
     protected:
 
     private:

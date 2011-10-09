@@ -20,6 +20,8 @@ void Quadtree::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(Quadtree::constructor, "remove", Remove);
     NODE_SET_PROTOTYPE_METHOD(Quadtree::constructor, "query", Query);
 
+    NODE_SET_PROTOTYPE_METHOD(Quadtree::constructor, "size", Size);
+
     target->Set(String::NewSymbol("Quadtree"), Quadtree::constructor->GetFunction());
 
 }
@@ -31,8 +33,13 @@ Handle<Value> Quadtree::New(const Arguments& args) {
     return args.This();
 }
 
+Handle<Value> Quadtree::Size(const Arguments& args) {
+    HandleScope scope;
+    Quadtree *quadtree = ObjectWrap::Unwrap<Quadtree>(args.This());
+    return scope.Close(Integer::New(quadtree->_quadtree->size()));
+}
 
-
+//TODO add async
 Handle<Value> Quadtree::Insert(const Arguments& args) {
     HandleScope scope; //do we need the scope? don't think so
     Quadtree *quadtree = ObjectWrap::Unwrap<Quadtree>(args.This());
@@ -41,6 +48,7 @@ Handle<Value> Quadtree::Insert(const Arguments& args) {
     return Undefined();
 }
 
+//TODO add async
 Handle<Value> Quadtree::Remove(const Arguments& args) {
     HandleScope scope; //do we need the scope? don't think so
     Quadtree *quadtree = ObjectWrap::Unwrap<Quadtree>(args.This());
@@ -124,7 +132,7 @@ Handle<Value> Quadtree::Query(const Arguments& args) {
         return scope.Close(result);
     }
 }
-
+//TODO add async
 Handle<Value> Quadtree::QueryAll(const Arguments& args) {
     HandleScope scope;
     Quadtree *quadtree = ObjectWrap::Unwrap<Quadtree>(args.This());

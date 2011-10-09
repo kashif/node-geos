@@ -49,6 +49,10 @@ tests = (vows.describe "Quadtree").addBatch
         assert.isArray result
         assert.isNull error
 
+    "should have a size function": (tree) ->
+      assert.isFunction tree.size
+      assert.equal tree.size(), 1
+
 
 
 tests.export module
