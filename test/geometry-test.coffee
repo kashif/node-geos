@@ -20,14 +20,30 @@ tests = (vows.describe "Geometry").addBatch
       assert.equal geom.toString(), "POINT (1.0000000000000000 1.0000000000000000)"
 
     # geos unary predicates
+    # TODO real tests!
     "should have a isSimple function": (geom) ->
       assert.isFunction geom.isSimple
+      assert.isTrue geom.isSimple()
+    "should have a async isSimple function": (geom) ->
+      geom.isSimple (error, isSimple) ->
+        assert.isTrue isSimple
     "should have a isValid function": (geom) ->
       assert.isFunction geom.isValid
+    "should have a async isValid function": (geom) ->
+      geom.isValid (error, isValid) ->
+        assert.isTrue isValid
     "should have a isEmpty function": (geom) ->
       assert.isFunction geom.isEmpty
+      assert.isFalse geom.isEmpty()
+    "should have a async isEmpty function": (geom) ->
+      geom.isEmpty (error, isEmpty) ->
+        assert.isFalse isEmpty
     "should have a isRectangle function": (geom) ->
       assert.isFunction geom.isRectangle
+      assert.isFalse geom.isRectangle()
+    "should have a async isRectangle function": (geom) ->
+      geom.isRectangle (error, isRectangle) ->
+        assert.isFalse isRectangle
 
     # geos binary predicates
     "should have a disjoint function": (geom) ->
