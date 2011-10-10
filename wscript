@@ -20,14 +20,6 @@ def configure(conf):
   geos_cflags = popen("%s --cflags" % geos_config).readline().strip()
   conf.env.append_value("CPPPATH_GEOS", geos_cflags)
 
-  conf.env.append_value("LIBPATH_PROJ", "/usr/lib")
-  conf.env.append_value("LIBPATH_PROJ", "/usr/local/lib")
-  conf.env.append_value("LIBPATH_PROJ", "/opt/local/lib")
-  conf.env.append_value("LIB_PROJ", "proj")
-  conf.env.append_value("CPPPATH_PROJ", "/usr/include")
-  conf.env.append_value("CPPPATH_PROJ", "/usr/local/include")
-  conf.env.append_value("CPPPATH_PROJ", "/opt/local/include")
-
 def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
   obj.cxxflags = ["-g", "-D_LARGEFILE_SOURCE", "-Wall"]
