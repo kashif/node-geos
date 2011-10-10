@@ -48,34 +48,83 @@ tests = (vows.describe "Geometry").addBatch
     # geos binary predicates
     "should have a disjoint function": (geom) ->
       assert.isFunction geom.disjoint
-      assert.ok not geom.disjoint geom
+      assert.isFalse geom.disjoint geom
+
+    "shoudl have an async disjoint function": (geom) ->
+      geom.disjoint geom, (error, disjoint) ->
+        assert.isFalse disjoint
+
     "should have a touches function": (geom) ->
       assert.isFunction geom.touches
       assert.ok not geom.touches geom
+
+    "should have an async touches function": (geom) ->
+      geom.touches geom, (error, touches) ->
+        assert.isFalse touches
+
     "should have a intersects function": (geom) ->
       assert.isFunction geom.intersects
-      assert.ok not geom.disjoint geom
+      assert.isTrue geom.intersects geom
+
+    "should have an async intersects function": (geom) ->
+      geom.intersects geom, (error, intersects) ->
+        assert.isTrue intersects
+
     "should have a crosses function": (geom) ->
       assert.isFunction geom.crosses
-      assert.ok not geom.disjoint geom
+      assert.isFalse geom.crosses geom
+
+    "should have an async crosses function": (geom) ->
+      geom.crosses geom, (error, crosses) ->
+        assert.isFalse crosses
+
     "should have a within function": (geom) ->
       assert.isFunction geom.within
-      assert.ok not geom.disjoint geom
+      assert.isTrue geom.within geom
+
+    "should have an async within function": (geom) ->
+      geom.within geom, (error, within) ->
+        assert.isTrue within
+
     "should have a contains function": (geom) ->
       assert.isFunction geom.contains
-      assert.ok not geom.disjoint geom
+      assert.isTrue geom.contains geom
+
+    "should have an async contains function": (geom) ->
+      geom.contains geom, (error, contains) ->
+        assert.isTrue contains
+
     "should have a overlaps function": (geom) ->
       assert.isFunction geom.overlaps
-      assert.ok not geom.disjoint geom
+      assert.isFalse geom.overlaps geom
+
+    "should have a async overlaps function": (geom) ->
+      geom.overlaps geom, (error, overlaps) ->
+        assert.isFalse overlaps
+
     "should have a equals function": (geom) ->
       assert.isFunction geom.equals
-      assert.ok geom.equals geom
+      assert.isTrue geom.equals geom
+
+    "should have an async equals function": (geom) ->
+      geom.equals geom, (error, equals) ->
+        assert.isTrue equals
+
     "should have a covers function": (geom) ->
       assert.isFunction geom.covers
-      assert.ok not geom.disjoint geom
+      assert.isTrue geom.covers geom
+
+    "should have an async covers function": (geom) ->
+      geom.covers geom, (error, covers) ->
+        assert.isTrue covers
+
     "should have a coveredBy function": (geom) ->
       assert.isFunction geom.coveredBy
-      assert.ok not geom.disjoint geom
+      assert.isTrue geom.coveredBy geom
+
+    "should have an async coveredBy function": (geom) ->
+      geom.coveredBy geom, (error, coveredBy) ->
+        assert.isTrue coveredBy
 
     #topologic functions
     "should have a intersection function": (geom) ->

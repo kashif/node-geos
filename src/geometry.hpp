@@ -56,21 +56,68 @@
             }                                                                           \
                                                                                         \
         }                                                                               \
-    };                                                                                  \
-                                                                                        \
+    };
 
-#define NODE_GEOS_BINARY_PREDICATE(cppmethod, geosmethod)                   \
-    Handle<Value> Geometry::cppmethod(const Arguments& args)                \
-    {                                                                       \
-        HandleScope scope;                                                  \
-        Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());         \
-        Geometry *geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());\
-        if (geom->_geom->geosmethod(geom2->_geom)) {                        \
-            return True();                                                  \
-        } else {                                                            \
-            return False();                                                 \
-        }                                                                   \
-    };                                                                      \
+
+#define NODE_GEOS_BINARY_PREDICATE(cppmethod, geosmethod)                               \
+    typedef struct {                                                                    \
+        Geometry *geom;                                                                 \
+        Geometry *geom2;                                                                \
+        Persistent<Function> cb;                                                        \
+        bool result;                                                                    \
+    } geosmethod##_baton_t;                                                             \
+                                                                                        \
+    int Geometry::EIO_##cppmethod(eio_req *req) {                                       \
+        geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
+        closure->result = closure->geom->_geom->geosmethod(closure->geom2->_geom);      \
+        return 0;                                                                       \
+    }                                                                                   \
+                                                                                        \
+    int Geometry::EIO_After##cppmethod(eio_req *req) {                                  \
+        geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
+        Local<Value> argv[2] = { Local<Value>::New(Null()), Local<Value>::New(closure->result ? True() : False()) }; \
+        TryCatch tryCatch;                                                              \
+        closure->cb->Call(Context::GetCurrent()->Global(), 2, argv);                    \
+                                                                                        \
+        if(tryCatch.HasCaught()) {                                                      \
+            FatalException(tryCatch);                                                   \
+        }                                                                               \
+                                                                                        \
+        closure->cb.Dispose();                                                          \
+        closure->geom->Unref();                                                         \
+        closure->geom2->_unref();                                                       \
+        ev_unref(EV_DEFAULT_UC);                                                        \
+                                                                                        \
+        delete closure;                                                                 \
+                                                                                        \
+        return 0;                                                                       \
+                                                                                        \
+    }                                                                                   \
+    Handle<Value> Geometry::cppmethod(const Arguments& args)                            \
+    {                                                                                   \
+        HandleScope scope;                                                              \
+        Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());                     \
+        Geometry *geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());            \
+        if (args.Length() == 2) {                                                       \
+            geosmethod##_baton_t *closure = new geosmethod##_baton_t();                 \
+            closure->geom = geom;                                                       \
+            closure->geom2 = geom2;                                                     \
+            closure->cb = Persistent<Function>::New(Handle<Function>::Cast(args[1]));   \
+            eio_custom(EIO_##cppmethod, EIO_PRI_DEFAULT, EIO_After##cppmethod, closure);\
+            ev_ref(EV_DEFAULT_UC);                                                      \
+            geom->Ref();                                                                \
+            geom2->_ref();                                                              \
+            return Undefined();                                                         \
+        } else {                                                                        \
+            if (geom->_geom->geosmethod(geom2->_geom)) {                                \
+                return True();                                                          \
+            } else {                                                                    \
+                return False();                                                         \
+            }                                                                           \
+                                                                                        \
+        }                                                                               \
+    };
+
 
 #define NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)               \
     Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
@@ -122,16 +169,16 @@ class Geometry : public ObjectWrap {
     NODE_GEOS_V8_FUNCTION(IsRectangle);
 
     // GEOS binary predicates
-    static Handle<Value> Disjoint(const Arguments& args);
-    static Handle<Value> Touches(const Arguments& args);
-    static Handle<Value> Intersects(const Arguments& args);
-    static Handle<Value> Crosses(const Arguments& args);
-    static Handle<Value> Within(const Arguments& args);
-    static Handle<Value> Contains(const Arguments& args);
-    static Handle<Value> Overlaps(const Arguments& args);
-    static Handle<Value> Equals(const Arguments& args);
-    static Handle<Value> Covers(const Arguments& args);
-    static Handle<Value> CoveredBy(const Arguments& args);
+    NODE_GEOS_V8_FUNCTION(Disjoint);
+    NODE_GEOS_V8_FUNCTION(Touches);
+    NODE_GEOS_V8_FUNCTION(Intersects);
+    NODE_GEOS_V8_FUNCTION(Crosses);
+    NODE_GEOS_V8_FUNCTION(Within);
+    NODE_GEOS_V8_FUNCTION(Contains);
+    NODE_GEOS_V8_FUNCTION(Overlaps);
+    NODE_GEOS_V8_FUNCTION(Equals);
+    NODE_GEOS_V8_FUNCTION(Covers);
+    NODE_GEOS_V8_FUNCTION(CoveredBy);
 
     //static Handle<Value> EqualsExact(const Arguments& args);
     static Handle<Value> IsWithinDistance(const Arguments& args);
