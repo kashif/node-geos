@@ -110,6 +110,9 @@ class Geometry : public ObjectWrap {
     static void Initialize(Handle<Object> target);
     static Handle<Value> New(geos::geom::Geometry* geometry);
 
+    void _ref() { Ref(); };
+    void _unref() { Unref(); };
+
  protected:
     static Handle<Value> New(const Arguments& args);
     // GEOS unary predicates
