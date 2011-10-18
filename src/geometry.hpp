@@ -2,6 +2,7 @@
 #define GEOMETRY_HPP
 
 #include <geos/geom/Geometry.h>
+#include <geos/util/GEOSException.h>
 #include "binding.hpp"
 
 #define NODE_GEOS_UNARY_PREDICATE(cppmethod, geosmethod)                                \
@@ -49,12 +50,12 @@
             geom->Ref();                                                                \
             return Undefined();                                                         \
         } else {                                                                        \
-            if (geom->_geom->geosmethod()) {                                            \
-                return True();                                                          \
-            } else {                                                                    \
-                return False();                                                         \
+            try {                                                                       \
+                return geom->_geom->geosmethod() ? True() : False();                    \
+            } catch(geos::util::GEOSException exception) {                              \
+                return ThrowException(Exception::Error(String::New(exception.what()))); \
             }                                                                           \
-                                                                                        \
+            return Undefined();                                                         \
         }                                                                               \
     };
 
@@ -109,12 +110,12 @@
             geom2->_ref();                                                              \
             return Undefined();                                                         \
         } else {                                                                        \
-            if (geom->_geom->geosmethod(geom2->_geom)) {                                \
-                return True();                                                          \
-            } else {                                                                    \
-                return False();                                                         \
+            try {                                                                       \
+                return geom->_geom->geosmethod(geom2->_geom) ? True() : False();        \
+            } catch(geos::util::GEOSException exception) {                              \
+                return ThrowException(Exception::Error(String::New(exception.what()))); \
             }                                                                           \
-                                                                                        \
+            return Undefined();                                                         \
         }                                                                               \
     };
 

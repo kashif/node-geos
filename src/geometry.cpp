@@ -66,7 +66,7 @@ void Geometry::Initialize(Handle<Object> target)
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
 
-Handle<Value> Geometry::New(geos::geom::Geometry* geometry) {
+Handle<Value> Geometry::New(geos::geom::Geometry *geometry) {
     HandleScope scope;
     Geometry *geom = new Geometry(geometry);
     Handle<Value> ext = External::New(geom);
