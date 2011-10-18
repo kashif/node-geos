@@ -50,6 +50,8 @@ Handle<Value> WKTReader::Read(const Arguments& args)
         return scope.Close(Geometry::New(geom));
     } catch (geos::io::ParseException e) {
         return ThrowException(Exception::Error(String::New(e.what())));
+    } catch (geos::util::GEOSException e) {
+        return ThrowException(Exception::Error(String::New(e.what())));
     } catch (...) {
         return ThrowException(Exception::Error(String::New("Exception while reading WKT.")));
     }

@@ -28,6 +28,14 @@ tests = (vows.describe "WKTReader").addBatch
     "should throw an exception on malformed WKT": (reader) ->
       assert.throws reader.read, Error
 
+    "should throw another exception on invalid WKT": (reader) ->
+      try
+        reader.read "POLYGON((0 0))"
+        assert.true false
+      catch e
+        assert.instanceOf e, Error
+        assert.equal e.message, "IllegalArgumentException: point array must contain 0 or >1 elements\n"
+
   "A WKTReader with non standard GeometryFactory":
     topic: ->
       new WKTReader new GeometryFactory new PrecisionModel "FIXED"
