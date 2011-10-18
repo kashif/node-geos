@@ -216,4 +216,27 @@ tests = (vows.describe "Geometry").addBatch
       assert.isString geom.getGeometryType()
       assert.equal geom.getGeometryType(), "Point"
 
+  "A invalid Geometry":
+
+    topic: ->
+      multipolygon = "MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2, 3 2, 3 3, 2 3,2 2)),
+        ((3 3,6 2,6 4,3 3)),
+        ((78 45,65 34,100 54,78 45),(4 65, 54 23, 544 346, 2 1, 4 65)))"
+      (new WKTReader()).read multipolygon
+
+    "should return false on isValid": (geom) ->
+      assert.isFalse geom.isValid()
+      geom.isValid (error, isValid) ->
+        assert.isFalse isValid
+
+    #TODO fix this text
+    #"should throw an error on spatial operations": (geom) ->
+    #  try
+    #    geom.getArea()
+    #  catch e
+    #    console.log "test"
+    #    assert.instanceOf e, Error
+
+
+
 tests.export module
