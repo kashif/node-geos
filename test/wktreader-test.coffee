@@ -29,12 +29,9 @@ tests = (vows.describe "WKTReader").addBatch
       assert.throws reader.read, Error
 
     "should throw another exception on invalid WKT": (reader) ->
-      try
+      fn = ->
         reader.read "POLYGON((0 0))"
-        assert.true false
-      catch e
-        assert.instanceOf e, Error
-        assert.equal e.message, "IllegalArgumentException: point array must contain 0 or >1 elements\n"
+      assert.throws fn, Error
 
     "should read a wellformed WKT which represents a invalid geometry": (reader) ->
       multipolygon = "MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2, 3 2, 3 3, 2 3,2 2)),
