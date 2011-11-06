@@ -229,14 +229,9 @@ tests = (vows.describe "Geometry").addBatch
       geom.isValid (error, isValid) ->
         assert.isFalse isValid
 
-    #TODO fix this text
-    #"should throw an error on spatial operations": (geom) ->
-    #  try
-    #    geom.getArea()
-    #  catch e
-    #    console.log "test"
-    #    assert.instanceOf e, Error
-
-
+    "should throw an error on spatial operations": (geom) ->
+      fn = ->
+        geom.intersects geom
+      asseeort.throws fn, Error
 
 tests.export module
