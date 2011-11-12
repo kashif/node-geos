@@ -25,7 +25,7 @@
   , "url": "https://github.com/kashif/node-geos.git"
   }
 , "bugs":
-  { "web": "http://github.com/kashif/node-geos/issues"
+  { "url": "http://github.com/kashif/node-geos/issues"
   }
 , "scripts":
   { "install" : "node-waf configure build"
