@@ -37,10 +37,10 @@
   }
 , "devDependencies":
   {
-    "vows": "*",
+    "vows": ">=0.5.13",
     "coffee-script": "*"
   }
 , "engines":
-  { "node": "~0.4"
+  { "node": ">=0.6.0"
   }
 }
