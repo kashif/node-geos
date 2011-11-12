@@ -232,6 +232,6 @@ tests = (vows.describe "Geometry").addBatch
     "should throw an error on spatial operations": (geom) ->
       fn = ->
         geom.intersects geom
-      asseeort.throws fn, Error
+      assert.throws fn, Error
 
 tests.export module
