@@ -1,8 +1,10 @@
-exports.WKTReader = require('./build/default/geos').WKTReader;
-exports.WKTWriter = require('./build/default/geos').WKTWriter;
-exports.Geometry = require('./build/default/geos').Geometry;
-exports.GeometryFactory = require('./build/default/geos').GeometryFactory;
-exports.PrecisionModel = require('./build/default/geos').PrecisionModel;
-exports.Quadtree = require('./build/default/geos').Quadtree;
-exports.geosversion = require('./build/default/geos').geosversion;
-exports.jtsport = require('./build/default/geos').jtsport;
+var geos = require('./build/Release/geos');
+
+exports.WKTReader = geos.WKTReader;
+exports.WKTWriter = geos.WKTWriter;
+exports.Geometry = geos.Geometry;
+exports.GeometryFactory = geos.GeometryFactory;
+exports.PrecisionModel = geos.PrecisionModel;
+exports.Quadtree = geos.Quadtree;
+exports.geosversion = geos.geosversion;
+exports.jtsport = geos.jtsport;

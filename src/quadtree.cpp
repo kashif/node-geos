@@ -71,10 +71,9 @@ typedef struct {
     std::vector<int32_t> result;
 } query_baton_t;
 
-int Quadtree::EIO_Query(eio_req *req) {
+void Quadtree::EIO_Query(eio_req *req) {
     query_baton_t *closure = static_cast<query_baton_t *>(req->data);
     closure->quadtree->_quadtree->query(closure->geom->_geom->getEnvelopeInternal(), (std::vector<void*>&) closure->result);
-    return 0;
 }
 
 int Quadtree::EIO_AfterQuery(eio_req *req) {

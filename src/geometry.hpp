@@ -12,10 +12,9 @@
         bool result;                                                                    \
     } geosmethod##_baton_t;                                                             \
                                                                                         \
-    int Geometry::EIO_##cppmethod(eio_req *req) {                                       \
+    void Geometry::EIO_##cppmethod(eio_req *req) {                                      \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         closure->result = closure->geom->_geom->geosmethod();                           \
-        return 0;                                                                       \
     }                                                                                   \
                                                                                         \
     int Geometry::EIO_After##cppmethod(eio_req *req) {                                  \
@@ -68,10 +67,9 @@
         bool result;                                                                    \
     } geosmethod##_baton_t;                                                             \
                                                                                         \
-    int Geometry::EIO_##cppmethod(eio_req *req) {                                       \
+    void Geometry::EIO_##cppmethod(eio_req *req) {                                      \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         closure->result = closure->geom->_geom->geosmethod(closure->geom2->_geom);      \
-        return 0;                                                                       \
     }                                                                                   \
                                                                                         \
     int Geometry::EIO_After##cppmethod(eio_req *req) {                                  \
@@ -146,14 +144,14 @@
 
 #define NODE_GEOS_V8_FUNCTION(cppmethod) \
     static Handle<Value> cppmethod(const Arguments& args); \
-    static int EIO_##cppmethod(eio_req *req); \
+    static void EIO_##cppmethod(eio_req *req); \
     static int EIO_After##cppmethod(eio_req *req); \
 
 class Geometry : public ObjectWrap {
  public:
-    geos::geom::Geometry* _geom;
+    geos::geom::Geometry *_geom;
     Geometry();
-    Geometry(geos::geom::Geometry* geom);
+    Geometry(geos::geom::Geometry *geom);
     ~Geometry();
     static void Initialize(Handle<Object> target);
     static Handle<Value> New(geos::geom::Geometry* geometry);
