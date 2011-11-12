@@ -4,6 +4,7 @@
 
 ##Prerequisites
 
+Required node version is 0.6.0 or higher.
 Make sure you have GEOS version 3.x or higher installed together with the
 headers and libraries.
 
