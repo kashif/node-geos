@@ -4,4 +4,4 @@ node_js:
   - 0.6
   - 0.7
 
-before_install: sudo apt-get install libgeos-3.2.2 libgeos-dev
+before_install: sudo apt-get install libgeos libgeos-dev
