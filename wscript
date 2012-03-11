@@ -17,8 +17,8 @@ def configure(conf):
   geos_ldflags = popen("%s --ldflags" % geos_config).readline().strip()[2:]
   conf.env.append_value("LIBPATH_GEOS", geos_ldflags)
   conf.env.append_value("LIB_GEOS", "geos")
-  geos_cflags = popen("%s --cflags" % geos_config).readline().strip()
-  conf.env.append_value("CPPPATH_GEOS", geos_cflags)
+  geos_includes = popen("%s --includes" % geos_config).readline().strip()
+  conf.env.append_value("CPPPATH_GEOS", geos_includes)
 
 def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
