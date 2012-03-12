@@ -21,17 +21,25 @@ or install it via [npm](http://npmjs.org/):
 
     npm install geos (outdated version)
 
+or
+
+    npm install git://github.com/kashif/node-geos.git
+
 ##Testing
 
     npm test
 
 To test the c++ binding we use vows. Just run vows on the tests in the test
-directory. Make sure you have coffee-script installed as they are written in
+directory or use the above command. Make sure you have coffee-script installed as they are written in
 coffee-script.
+
+As continuous integration system we use [travis](http://travis-ci.org).
+
+Build status: [![Build Status](https://secure.travis-ci.org/kashif/node-geos.png)](http://travis-ci.org/kashif/node-geos)
 
 ##Examples
 
-For some examples please take a look at the examples directory.
+For some examples please take a look at the `examples` directory.
 
 ##Bugs
 
