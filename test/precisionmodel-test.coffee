@@ -22,7 +22,7 @@ tests = (vows.describe "PrecisionModel").addBatch
 
     "getScale should return a valid scale factor": (model) ->
       assert.isFunction model.getScale
-      assert.equal model.getScale(), 1
+      assert.equal model.getScale(), 0
 
     "getOffsetX should return a valid x-offset": (model) ->
       assert.isFunction model.getOffsetX
