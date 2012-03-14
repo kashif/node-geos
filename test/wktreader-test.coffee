@@ -53,7 +53,7 @@ tests = (vows.describe "WKTReader").addBatch
     "should read a WKT POINT(1 1)": (reader) ->
       geom = reader.read "POINT(1 1)"
       assert.instanceOf geom, Geometry
-      assert.equal geom.toString(), "POINT (1.0 1.0)"
+      assert.equal geom.toString(), "POINT (1 1)"
 
 
 tests.export module
