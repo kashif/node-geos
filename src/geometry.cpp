@@ -130,6 +130,7 @@ Handle<Value> Geometry::ToJSON(const Arguments& args) {
         writer->bbox = args[1]->BooleanValue();
     }
     Handle<Value> json = writer->write(geom->_geom);
+    delete writer;
     return scope.Close(json);
 }
 
