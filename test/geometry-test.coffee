@@ -3,8 +3,8 @@
 vows = require "vows"
 assert = require "assert"
 
-Geometry = (require "../geos").Geometry
-WKTReader = (require "../geos").WKTReader
+Geometry = (require "../src").Geometry
+WKTReader = (require "../src").WKTReader
 
 tests = (vows.describe "Geometry").addBatch
 

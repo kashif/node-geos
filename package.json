@@ -31,17 +31,17 @@
   { "url": "http://github.com/kashif/node-geos/issues"
   }
 , "scripts":
-  { "install" : "node-waf configure build"
+  { "install" : "./node_modules/coffee-script/bin/cake install"
   , "test": "vows"
   }
-, "main": "./geos.js"
+, "main": "./lib"
 , "dependencies":
   {
+    "coffee-script": "*"
   }
 , "devDependencies":
   {
-    "vows": ">=0.5.13",
-    "coffee-script": "*"
+    "vows": ">=0.5.13"
   }
 , "engines":
   { "node": ">=0.6.0"

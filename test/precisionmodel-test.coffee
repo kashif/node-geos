@@ -3,7 +3,7 @@
 vows = require "vows"
 assert = require "assert"
 
-PrecisionModel = (require "../geos").PrecisionModel
+PrecisionModel = (require "../src").PrecisionModel
 
 tests = (vows.describe "PrecisionModel").addBatch
 

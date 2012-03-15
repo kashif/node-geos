@@ -1,0 +1,9 @@
+_geos = require("../build/Release/geos")
+exports.WKTReader = _geos.WKTReader
+exports.WKTWriter = _geos.WKTWriter
+exports.Geometry = _geos.Geometry
+exports.GeometryFactory = _geos.GeometryFactory
+exports.PrecisionModel = _geos.PrecisionModel
+exports.Quadtree = _geos.Quadtree
+exports.geosversion = _geos.geosversion
+exports.jtsport = _geos.jtsport
