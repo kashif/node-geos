@@ -45,6 +45,16 @@ tests = (vows.describe "WKTReader").addBatch
       assert.equal geom.toString(), "POLYGON EMPTY"
       assert.isTrue geom.isEmpty()
 
+    "should throw an Error on read with empty string": (reader) ->
+      fn = ->
+        reader.read ""
+      assert.throws fn, Error
+
+    "should throw an Error on read without any input": (reader) ->
+      fn = ->
+        reader.read()
+      assert.throws fn, Error
+
   "A WKTReader with non standard GeometryFactory":
     topic: ->
       new WKTReader new GeometryFactory new PrecisionModel "FIXED"
