@@ -17,6 +17,10 @@
   , { "name": "Philipp Borgers"
     , "email": "borgers@mi.fu-berlin.de"
     }
+  , { "name": "Andreas Kalsch"
+    , "web": "http://akidee.de"
+    , "email": "mail@akidee.de"
+    }
   ]
 , "version": "0.0.2"
 , "licenses": [
