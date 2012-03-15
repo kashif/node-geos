@@ -242,4 +242,13 @@ tests = (vows.describe "Geometry").addBatch
     "should return true on isEmpty": (geom) ->
       assert.isTrue geom.isEmpty()
 
+  "A direct call to Geometry constructor":
+
+    topic: ->
+      ->
+        Geometry
+
+    "should throw an Error": (call) ->
+      assert.throws call(), Error
+
 tests.export module
