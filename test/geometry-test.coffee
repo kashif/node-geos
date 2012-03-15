@@ -234,4 +234,12 @@ tests = (vows.describe "Geometry").addBatch
         geom.intersects geom
       assert.throws fn, Error
 
+  "An empty Geometry":
+
+    topic: ->
+      (new WKTReader()).read "POINT EMPTY"
+
+    "should return true on isEmpty": (geom) ->
+      assert.isTrue geom.isEmpty()
+
 tests.export module

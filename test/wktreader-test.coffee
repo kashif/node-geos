@@ -40,6 +40,11 @@ tests = (vows.describe "WKTReader").addBatch
       geom = reader.read multipolygon
       assert.isFalse geom.isValid()
 
+    "should read an EMPTY Geometry": (reader) ->
+      geom = reader.read "POLYGON EMPTY"
+      assert.equal geom.toString(), "POLYGON EMPTY"
+      assert.isTrue geom.isEmpty()
+
   "A WKTReader with non standard GeometryFactory":
     topic: ->
       new WKTReader new GeometryFactory new PrecisionModel "FIXED"
