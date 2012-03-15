@@ -4,6 +4,7 @@
 #include <geos/geom/Geometry.h>
 #include <geos/util/GEOSException.h>
 #include "binding.hpp"
+#include "geojsonwriter.hpp"
 
 #define NODE_GEOS_UNARY_PREDICATE(cppmethod, geosmethod)                                \
     typedef struct {                                                                    \
@@ -203,6 +204,8 @@ class Geometry : public ObjectWrap {
     static Handle<Value> SetSRID(const Arguments& args);
 
     static Handle<Value> GetGeometryType(const Arguments& args);
+
+    static Handle<Value> ToJSON(const Arguments& args);
 
  private:
     static Persistent<FunctionTemplate> constructor;

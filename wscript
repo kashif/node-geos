@@ -25,5 +25,5 @@ def build(bld):
   obj.cxxflags = ["-g", "-D_LARGEFILE_SOURCE", "-Wall"]
   obj.target = 'geos'
   obj.source = "src/binding.cpp src/geometry.cpp src/wktreader.cpp src/wktwriter.cpp src/geometryfactory.cpp src/precisionmodel.cpp"
-  obj.source += " src/quadtree.cpp"
+  obj.source += " src/quadtree.cpp src/geojsonwriter.cpp"
   obj.uselib = "GEOS"
