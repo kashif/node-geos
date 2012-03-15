@@ -17,6 +17,9 @@ build = (src, dst, watch) ->
   coffee.stdout.on "data", (data) -> print data.toString()
   coffee.stderr.on "data", (data) -> print data.toString()
 
+task "binary", "Compile C++ Code", ->
+  buildBinary()
+
 task "build", "Compile CoffeeScript source files", ->
   build "src", "lib"
   build "examples", "examples"
