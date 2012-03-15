@@ -5,7 +5,7 @@ coffeeBin = "./node_modules/coffee-script/bin/coffee"
 vows = "./node_modules/vows/bin/vows"
 
 buildBinary = ->
-  waf = spawn "node-waf", ["clean", "configure", "build"]
+  waf = spawn "node-waf", ["configure", "build"]
   waf.stdout.on "data", (data) -> print data.toString()
   waf.stderr.on "data", (data) -> print data.toString()
 
