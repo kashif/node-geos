@@ -19,6 +19,12 @@ tests = (vows.describe "Geometry").addBatch
       assert.isFunction geom.toString
       assert.equal geom.toString(), "POINT (1.0000000000000000 1.0000000000000000)"
 
+    "should have a toGeoJSON function": (geom) ->
+      assert.isFunction geom.toGeoJSON
+
+    "should have a toJSON (alias) function": (geom) ->
+      assert.isFunction geom.toJSON
+
     # geos unary predicates
     # TODO real tests!
     "should have a isSimple function": (geom) ->

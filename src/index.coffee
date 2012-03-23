@@ -13,4 +13,6 @@ Geometry = ->
 
 Geometry.prototype= _Geometry.prototype
 
+Geometry.prototype.toGeoJSON = Geometry.prototype.toJSON
+
 exports.Geometry = Geometry
