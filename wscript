@@ -11,7 +11,8 @@ sources = [
     "./src/cpp/wktwriter.cpp",
     "./src/cpp/geometryfactory.cpp",
     "./src/cpp/precisionmodel.cpp",
-    "./src/cpp/quadtree.cpp"
+    "./src/cpp/quadtree.cpp",
+    "./src/cpp/geojsonwriter.cpp"
  ]
 
 def set_options(opt):
