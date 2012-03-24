@@ -19,5 +19,4 @@ void init (Handle<Object> target) {
     GeometryFactory::Initialize(target);
     PrecisionModel::Initialize(target);
     Quadtree::Initialize(target);
-
 }
