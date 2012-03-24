@@ -1,19 +1,16 @@
 #include "geometry.hpp"
 
-Geometry::Geometry() {
-}
+Geometry::Geometry() {}
 
 Geometry::Geometry(geos::geom::Geometry *geom) : ObjectWrap() {
     _geom = geom;
 }
-Geometry::~Geometry()
-{
-}
+
+Geometry::~Geometry() {}
 
 Persistent<FunctionTemplate> Geometry::constructor;
 
-void Geometry::Initialize(Handle<Object> target)
-{
+void Geometry::Initialize(Handle<Object> target) {
     HandleScope scope;
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Geometry::New));
@@ -122,7 +119,7 @@ Handle<Value> Geometry::SetSRID(const Arguments& args) {
 Handle<Value> Geometry::ToJSON(const Arguments& args) {
     HandleScope scope;
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
-    GeoJSONWriter* writer = new GeoJSONWriter;
+    GeoJSONWriter* writer = new GeoJSONWriter();
     if (args.Length() >= 1 && !args[0]->IsUndefined() && !args[0]->IsNull()) {
         writer->setRoundingPrecision(args[0]->Int32Value());
     }
