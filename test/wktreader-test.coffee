@@ -3,10 +3,10 @@
 vows = require "vows"
 assert = require "assert"
 
-WKTReader = (require "../geos").WKTReader
-Geometry = (require "../geos").Geometry
-GeometryFactory = (require "../geos").GeometryFactory
-PrecisionModel = (require "../geos").PrecisionModel
+WKTReader = (require "../src").WKTReader
+Geometry = (require "../src").Geometry
+GeometryFactory = (require "../src").GeometryFactory
+PrecisionModel = (require "../src").PrecisionModel
 
 tests = (vows.describe "WKTReader").addBatch
 
@@ -40,6 +40,21 @@ tests = (vows.describe "WKTReader").addBatch
       geom = reader.read multipolygon
       assert.isFalse geom.isValid()
 
+    "should read an EMPTY Geometry": (reader) ->
+      geom = reader.read "POLYGON EMPTY"
+      assert.equal geom.toString(), "POLYGON EMPTY"
+      assert.isTrue geom.isEmpty()
+
+    "should throw an Error on read with empty string": (reader) ->
+      fn = ->
+        reader.read ""
+      assert.throws fn, Error
+
+    "should throw an Error on read without any input": (reader) ->
+      fn = ->
+        reader.read()
+      assert.throws fn, Error
+
   "A WKTReader with non standard GeometryFactory":
     topic: ->
       new WKTReader new GeometryFactory new PrecisionModel "FIXED"
@@ -53,7 +68,7 @@ tests = (vows.describe "WKTReader").addBatch
     "should read a WKT POINT(1 1)": (reader) ->
       geom = reader.read "POINT(1 1)"
       assert.instanceOf geom, Geometry
-      assert.equal geom.toString(), "POINT (1.0 1.0)"
+      assert.equal geom.toString(), "POINT (1 1)"
 
 
 tests.export module

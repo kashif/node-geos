@@ -3,4 +3,5 @@ language: "node_js"
 node_js:
   - 0.6
 
-before_install: sudo apt-get install libgeos-3.2.0 libgeos-dev
+before_install: ./scripts/travis_install_dependencies.sh
+

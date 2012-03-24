@@ -7,7 +7,7 @@ tests = (vows.describe "geos module").addBatch
 
   "The module":
     topic: ->
-      require __dirname + "/../geos"
+      require __dirname + "/../src"
 
     "should have a geosversion": (module) ->
       assert.isString module.geosversion

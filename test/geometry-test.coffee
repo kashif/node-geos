@@ -3,8 +3,8 @@
 vows = require "vows"
 assert = require "assert"
 
-Geometry = (require "../geos").Geometry
-WKTReader = (require "../geos").WKTReader
+Geometry = (require "../src").Geometry
+WKTReader = (require "../src").WKTReader
 
 tests = (vows.describe "Geometry").addBatch
 
@@ -233,5 +233,22 @@ tests = (vows.describe "Geometry").addBatch
       fn = ->
         geom.intersects geom
       assert.throws fn, Error
+
+  "An empty Geometry":
+
+    topic: ->
+      (new WKTReader()).read "POINT EMPTY"
+
+    "should return true on isEmpty": (geom) ->
+      assert.isTrue geom.isEmpty()
+
+  "A direct call to Geometry constructor":
+
+    topic: ->
+      ->
+        Geometry
+
+    "should throw an Error": (call) ->
+      assert.throws call(), Error
 
 tests.export module

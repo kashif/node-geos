@@ -3,9 +3,9 @@
 vows = require "vows"
 assert = require "assert"
 
-WKTReader = (require "../geos").WKTReader
-Geometry = (require "../geos").Geometry
-Quadtree = (require "../geos").Quadtree
+WKTReader = (require "../src").WKTReader
+Geometry = (require "../src").Geometry
+Quadtree = (require "../src").Quadtree
 
 geom = (new WKTReader()).read "POINT (1 1)"
 item = null

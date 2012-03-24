@@ -2,9 +2,17 @@ import Options, Utils
 from os import unlink, symlink, popen
 from os.path import exists
 
-srcdir = '.'
 blddir = 'build'
 VERSION = '0.0.1'
+sources = [
+    "./src/cpp/binding.cpp",
+    "./src/cpp/geometry.cpp",
+    "./src/cpp/wktreader.cpp",
+    "./src/cpp/wktwriter.cpp",
+    "./src/cpp/geometryfactory.cpp",
+    "./src/cpp/precisionmodel.cpp",
+    "./src/cpp/quadtree.cpp"
+ ]
 
 def set_options(opt):
   opt.tool_options('compiler_cxx')
@@ -24,6 +32,5 @@ def build(bld):
   obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
   obj.cxxflags = ["-g", "-D_LARGEFILE_SOURCE", "-Wall"]
   obj.target = 'geos'
-  obj.source = "src/binding.cpp src/geometry.cpp src/wktreader.cpp src/wktwriter.cpp src/geometryfactory.cpp src/precisionmodel.cpp"
-  obj.source += " src/quadtree.cpp src/geojsonwriter.cpp"
+  obj.source = sources
   obj.uselib = "GEOS"
