@@ -16,6 +16,7 @@ void WKTWriter::Initialize(Handle<Object> target) {
     constructor->SetClassName(String::NewSymbol("WKTWriter"));
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "write", WKTWriter::Write);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "setRoundingPrecision", WKTWriter::SetRoundingPrecision);
 
     target->Set(String::NewSymbol("WKTWriter"), constructor->GetFunction());
 }
@@ -34,5 +35,10 @@ Handle<Value> WKTWriter::Write(const Arguments& args) {
     //TODO catch exception?
     std::string str = writer->_writer->write(geom->_geom);
     return scope.Close(String::New(str.data()));
+}
 
+Handle<Value> WKTWriter::SetRoundingPrecision(const Arguments& args) {
+    WKTWriter *writer = ObjectWrap::Unwrap<WKTWriter>(args.This());
+    writer->_writer->setRoundingPrecision(args[0]->Int32Value());
+    return Undefined();
 }

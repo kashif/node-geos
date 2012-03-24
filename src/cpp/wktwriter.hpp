@@ -16,6 +16,7 @@ class WKTWriter : public ObjectWrap {
         static Handle<Value> Write(const Arguments& args);
 
     protected:
+        static Handle<Value> SetRoundingPrecision(const Arguments& args);
 
     private:
         geos::io::WKTWriter* _writer;
