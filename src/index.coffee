@@ -1,6 +1,6 @@
 _geos = require("../build/Release/geos")
 exports.WKTReader = _geos.WKTReader
-exports.WKTWriter = _geos.WKTWriter
+WKTWriter = _geos.WKTWriter
 _Geometry = _geos.Geometry
 exports.GeometryFactory = _geos.GeometryFactory
 exports.PrecisionModel = _geos.PrecisionModel
@@ -16,6 +16,15 @@ Geometry.prototype= _Geometry.prototype
 Geometry.prototype.toGeoJSON = Geometry.prototype.toJSON
 
 exports.Geometry = Geometry
+
+_setRoudingPrecision = WKTWriter.prototype.setRoundingPrecision
+
+WKTWriter.prototype.setRoundingPrecision = (decimals) ->
+  if not (typeof decimals == "number") then throw new Error "TypeError: input must be of type number (int)"
+  else
+    _setRoudingPrecision.call @, decimals
+
+exports.WKTWriter = WKTWriter
 
 GeoJSONWriter = _geos.GeoJSONWriter
 

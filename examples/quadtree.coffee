@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
-WKTReader = (require "../geos").WKTReader
-Quadtree = (require "../geos").Quadtree
+WKTReader = (require "../lib").WKTReader
+Quadtree = (require "../lib").Quadtree
 
 tree = new Quadtree()
 reader = new WKTReader()
