@@ -5,6 +5,8 @@ assert = require "assert"
 
 Geometry = (require "../src").Geometry
 WKTReader = (require "../src").WKTReader
+GeoJSONWriter = (require "../src").GeoJSONWriter
+
 reader = new WKTReader()
 
 tests = (vows.describe "GeoJSONWriter").addBatch
@@ -98,7 +100,7 @@ tests = (vows.describe "GeoJSONWriter").addBatch
       assert.equal json.type, 'MultiLineString'
 
     "has correct coordinates and bbox": (json) ->
-      assert.deepEqual json.coordinates, [ 
+      assert.deepEqual json.coordinates, [
         [ [ 0, 0 ], [ 1, 1 ], [ 1, 3 ] ]
         [ [ 2, 2 ], [ 5, 5 ], [ 1, 3 ] ]
       ]
@@ -146,7 +148,7 @@ tests = (vows.describe "GeoJSONWriter").addBatch
           }
           {
             type: 'MultiLineString'
-            coordinates: [ 
+            coordinates: [
               [ [ 0, 0 ], [ 1, 1 ], [ 1, 3 ] ]
               [ [ 2, 2 ], [ 5, 5 ], [ 1, 3 ] ]
             ]
@@ -155,5 +157,47 @@ tests = (vows.describe "GeoJSONWriter").addBatch
         ]
         bbox: [ 0, 0, 5, 5 ]
       }
+
+  "A new GeoJSONWriter":
+    topic: ->
+      new GeoJSONWriter()
+
+    "is an instance of GeoJSONWriter": (writer) ->
+      assert.instanceOf writer, GeoJSONWriter
+
+    "returns valid GeoJSON": (writer) ->
+      assert.deepEqual writer.write(reader.read("POINT(1.0 1)")), {
+        type: "Point"
+        coordinates: [1.0,1]
+      }
+
+    "throws an error on invalid write input": (writer) ->
+      fn = ->
+        writer.write undefined
+      assert.throws fn, Error
+
+    "has a setRoundingPrecision function": (writer) ->
+      assert.isFunction writer.setRoundingPrecision
+
+    "rounds correct": (writer) ->
+      writer.setRoundingPrecision 0
+      assert.deepEqual (writer.write(reader.read("POINT(1.2 2.3)"))).coordinates, [1, 2]
+
+    "throws an error on invalid input for setRoundingPrecision": (writer) ->
+      fn = ->
+        writer.setRoundingPrecision undefined
+      assert.throws fn, Error
+
+    "has a setBBox function": (writer) ->
+      assert.isFunction writer.setBBox
+
+    "has a working setBBox function": (writer) ->
+      writer.setBBox true
+      assert.deepEqual (writer.write(reader.read("POINT(1 1)"))).bbox, [1,1,1,1]
+
+    "throws an error on invalid input for setBBox": (writer) ->
+      fn = ->
+        writer.setBBox undefined
+      assert.throws fn, Error
 
 tests.export module

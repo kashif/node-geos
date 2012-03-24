@@ -11,7 +11,7 @@
 #include <geos/geom/MultiPolygon.h>
 #include "binding.hpp"
 
-class GeoJSONWriter {
+class GeoJSONWriter : public ObjectWrap{
 
     public:
         bool bbox;
@@ -24,9 +24,12 @@ class GeoJSONWriter {
         GeoJSONWriter();
         ~GeoJSONWriter();
         void setRoundingPrecision (int places);
-        Handle<Object> write(const geos::geom::Geometry* geom);
+        Handle<Value> write(const geos::geom::Geometry* geom);
+        static void Initialize(Handle<Object> target);
 
     protected:
+        static Handle<Value> New(const Arguments& args);
+
         double roundNumber(double coord);
         Handle<Array> coordinateToArray(const geos::geom::Coordinate* coord);
         Handle<Array> coordinateSequenceToArray(const geos::geom::CoordinateSequence* seq);
@@ -34,6 +37,13 @@ class GeoJSONWriter {
         Handle<Array> geometryCollectionToArrayOfObjects(const geos::geom::GeometryCollection* geom);
         Handle<Value> getCoordsOrGeom(const geos::geom::Geometry* geom);
         Handle<Value> getBbox(const geos::geom::Geometry* geom);
+
+        static Handle<Value> Write(const Arguments& args);
+        static Handle<Value> SetRoundingPrecision(const Arguments& args);
+        static Handle<Value> SetBBox(const Arguments& args);
+
+    private:
+        static Persistent<FunctionTemplate> constructor;
 
 };
 

@@ -1,4 +1,29 @@
 #include "geojsonwriter.hpp"
+#include "geometry.hpp"
+
+Persistent<FunctionTemplate> GeoJSONWriter::constructor;
+
+void GeoJSONWriter::Initialize(Handle<Object> target) {
+    HandleScope scope;
+
+    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(GeoJSONWriter::New));
+    constructor->InstanceTemplate()->SetInternalFieldCount(1);
+    constructor->SetClassName(String::NewSymbol("GeoJSONWriter"));
+
+    NODE_SET_PROTOTYPE_METHOD(constructor, "write", GeoJSONWriter::Write);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "setRoundingPrecision", GeoJSONWriter::SetRoundingPrecision);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "setBBox", GeoJSONWriter::SetBBox);
+
+    target->Set(String::NewSymbol("GeoJSONWriter"), constructor->GetFunction());
+}
+
+Handle<Value> GeoJSONWriter::New(const Arguments& args) {
+    GeoJSONWriter* writer;
+    HandleScope scope;
+    writer = new GeoJSONWriter();
+    writer->Wrap(args.This());
+    return args.This();
+}
 
 double GeoJSONWriter::roundNumber(double coord) {
     if (decimalPlaces == -1) {
@@ -138,6 +163,18 @@ GeoJSONWriter::GeoJSONWriter() {
 
 GeoJSONWriter::~GeoJSONWriter() {}
 
+Handle<Value> GeoJSONWriter::SetRoundingPrecision(const Arguments& args) {
+    GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
+    writer->setRoundingPrecision(args[0]->Int32Value());
+    return Undefined();
+}
+
+Handle<Value> GeoJSONWriter::SetBBox(const Arguments& args) {
+    GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
+    writer->bbox = args[0]->BooleanValue();
+    return Undefined();
+}
+
 void GeoJSONWriter::setRoundingPrecision(int places) {
     if (places > 15 || places < 0) {
         places = -1;
@@ -146,7 +183,12 @@ void GeoJSONWriter::setRoundingPrecision(int places) {
     factor = pow(10, decimalPlaces);
 }
 
-Handle<Object> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
+Handle<Value> GeoJSONWriter::Write(const Arguments& args) {
+    GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
+    return writer->write(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom);
+}
+
+Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
     HandleScope scope;
 
     Handle<Object> object = Object::New();

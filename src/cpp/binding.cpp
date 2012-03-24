@@ -5,6 +5,7 @@
 #include "geometryfactory.hpp"
 #include "precisionmodel.hpp"
 #include "quadtree.hpp"
+#include "geojsonwriter.hpp"
 
 extern "C"
 void init (Handle<Object> target) {
@@ -19,5 +20,6 @@ void init (Handle<Object> target) {
     GeometryFactory::Initialize(target);
     PrecisionModel::Initialize(target);
     Quadtree::Initialize(target);
+    GeoJSONWriter::Initialize(target);
 
 }
