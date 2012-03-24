@@ -1,19 +1,16 @@
 #include "geometry.hpp"
 
-Geometry::Geometry() {
-}
+Geometry::Geometry() {}
 
 Geometry::Geometry(geos::geom::Geometry *geom) : ObjectWrap() {
     _geom = geom;
 }
-Geometry::~Geometry()
-{
-}
+
+Geometry::~Geometry() {}
 
 Persistent<FunctionTemplate> Geometry::constructor;
 
-void Geometry::Initialize(Handle<Object> target)
-{
+void Geometry::Initialize(Handle<Object> target) {
     HandleScope scope;
 
     constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Geometry::New));
@@ -62,6 +59,8 @@ void Geometry::Initialize(Handle<Object> target)
     NODE_SET_PROTOTYPE_METHOD(constructor, "setSRID", Geometry::SetSRID);
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "getGeometryType", Geometry::GetGeometryType);
+
+    NODE_SET_PROTOTYPE_METHOD(constructor, "toJSON", Geometry::ToJSON);
 
     target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
 }
@@ -115,6 +114,21 @@ Handle<Value> Geometry::SetSRID(const Arguments& args) {
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     geom->_geom->setSRID(args[0]->IntegerValue());
     return Undefined();
+}
+
+Handle<Value> Geometry::ToJSON(const Arguments& args) {
+    HandleScope scope;
+    Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
+    GeoJSONWriter* writer = new GeoJSONWriter();
+    if (args.Length() >= 1 && !args[0]->IsUndefined() && !args[0]->IsNull()) {
+        writer->setRoundingPrecision(args[0]->Int32Value());
+    }
+    if (args.Length() >= 2 && !args[1]->IsUndefined() && !args[1]->IsNull()) {
+        writer->bbox = args[1]->BooleanValue();
+    }
+    Handle<Value> json = writer->write(geom->_geom);
+    delete writer;
+    return scope.Close(json);
 }
 
 Handle<Value> Geometry::Buffer(const Arguments& args) {
