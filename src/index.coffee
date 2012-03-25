@@ -24,6 +24,13 @@ WKTWriter.prototype.setRoundingPrecision = (decimals) ->
   else
     _setRoudingPrecision.call @, decimals
 
+_setTrim = WKTWriter.prototype.setTrim
+
+WKTWriter.prototype.setTrim = (b) ->
+  if not (typeof b == "boolean") then throw new Error "TypeError: input must be of type Boolean"
+  else
+    _setTrim.call @, b
+
 exports.WKTWriter = WKTWriter
 
 GeoJSONWriter = _geos.GeoJSONWriter

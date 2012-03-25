@@ -17,6 +17,7 @@ void WKTWriter::Initialize(Handle<Object> target) {
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "write", WKTWriter::Write);
     NODE_SET_PROTOTYPE_METHOD(constructor, "setRoundingPrecision", WKTWriter::SetRoundingPrecision);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "setTrim", WKTWriter::SetTrim);
 
     target->Set(String::NewSymbol("WKTWriter"), constructor->GetFunction());
 }
@@ -40,5 +41,11 @@ Handle<Value> WKTWriter::Write(const Arguments& args) {
 Handle<Value> WKTWriter::SetRoundingPrecision(const Arguments& args) {
     WKTWriter *writer = ObjectWrap::Unwrap<WKTWriter>(args.This());
     writer->_writer->setRoundingPrecision(args[0]->Int32Value());
+    return Undefined();
+}
+
+Handle<Value> WKTWriter::SetTrim(const Arguments& args) {
+    WKTWriter *writer = ObjectWrap::Unwrap<WKTWriter>(args.This());
+    writer->_writer->setTrim(args[0]->BooleanValue());
     return Undefined();
 }
