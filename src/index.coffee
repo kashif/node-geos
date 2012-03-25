@@ -17,12 +17,12 @@ Geometry.prototype.toGeoJSON = Geometry.prototype.toJSON
 
 exports.Geometry = Geometry
 
-_setRoudingPrecision = WKTWriter.prototype.setRoundingPrecision
+_setRoundingPrecision = WKTWriter.prototype.setRoundingPrecision
 
 WKTWriter.prototype.setRoundingPrecision = (decimals) ->
   if not (typeof decimals == "number") then throw new Error "TypeError: input must be of type number (int)"
   else
-    _setRoudingPrecision.call @, decimals
+    _setRoundingPrecision.call @, decimals
 
 exports.WKTWriter = WKTWriter
 
@@ -35,12 +35,19 @@ GeoJSONWriter.prototype.write = (geom) ->
   else
     _write.call @, geom
 
-_setBBox = GeoJSONWriter.prototype.setBBox
+_writeBbox = GeoJSONWriter.prototype.writeBbox
 
-GeoJSONWriter.prototype.setBBox = (b) ->
+GeoJSONWriter.prototype.writeBbox = (geom) ->
+  if not (geom instanceof Geometry) then throw new Error "TypeError: input (geom) must be of type Geometry."
+  else
+    _writeBbox.call @, geom
+
+_setBbox = GeoJSONWriter.prototype.setBbox
+
+GeoJSONWriter.prototype.setBbox = (b) ->
   if not (typeof b == "boolean") then throw new Error "TypeError: input must be of type Boolean"
   else
-    _setBBox.call @, b
+    _setBbox.call @, b
 
 _setRoundingPrecision = GeoJSONWriter.prototype.setRoundingPrecision
 
