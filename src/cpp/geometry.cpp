@@ -124,7 +124,7 @@ Handle<Value> Geometry::ToJSON(const Arguments& args) {
         writer->setRoundingPrecision(args[0]->Int32Value());
     }
     if (args.Length() >= 2 && !args[1]->IsUndefined() && !args[1]->IsNull()) {
-        writer->bbox = args[1]->BooleanValue();
+        writer->setBbox(args[1]->BooleanValue());
     }
     Handle<Value> json = writer->write(geom->_geom);
     delete writer;

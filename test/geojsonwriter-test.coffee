@@ -188,16 +188,22 @@ tests = (vows.describe "GeoJSONWriter").addBatch
         writer.setRoundingPrecision undefined
       assert.throws fn, Error
 
-    "has a setBBox function": (writer) ->
-      assert.isFunction writer.setBBox
+    "has a setBbox function": (writer) ->
+      assert.isFunction writer.setBbox
 
-    "has a working setBBox function": (writer) ->
-      writer.setBBox true
+    "has a working setBbox function": (writer) ->
+      writer.setBbox true
       assert.deepEqual (writer.write(reader.read("POINT(1 1)"))).bbox, [1,1,1,1]
 
     "throws an error on invalid input for setBBox": (writer) ->
       fn = ->
-        writer.setBBox undefined
+        writer.setBbox undefined
       assert.throws fn, Error
+
+    "has a writeBbox function": (writer) ->
+      assert.isFunction writer.writeBbox
+
+    "has a working writeBbox function": (writer) ->
+      assert.deepEqual (writer.writeBbox(reader.read("POINT(1 1)"))), [1,1,1,1]
 
 tests.export module

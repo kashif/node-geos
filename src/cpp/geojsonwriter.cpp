@@ -1,5 +1,4 @@
 #include "geojsonwriter.hpp"
-#include "geometry.hpp"
 
 Persistent<FunctionTemplate> GeoJSONWriter::constructor;
 
@@ -11,8 +10,9 @@ void GeoJSONWriter::Initialize(Handle<Object> target) {
     constructor->SetClassName(String::NewSymbol("GeoJSONWriter"));
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "write", GeoJSONWriter::Write);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "writeBbox", GeoJSONWriter::WriteBbox);
     NODE_SET_PROTOTYPE_METHOD(constructor, "setRoundingPrecision", GeoJSONWriter::SetRoundingPrecision);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "setBBox", GeoJSONWriter::SetBBox);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "setBbox", GeoJSONWriter::SetBbox);
 
     target->Set(String::NewSymbol("GeoJSONWriter"), constructor->GetFunction());
 }
@@ -137,7 +137,7 @@ Handle<Value> GeoJSONWriter::getCoordsOrGeom(const geos::geom::Geometry* geom) {
     return scope.Close(Null());
 }
 
-Handle<Value> GeoJSONWriter::getBbox(const geos::geom::Geometry* geom) {
+Handle<Value> GeoJSONWriter::writeBbox(const geos::geom::Geometry* geom) {
     HandleScope scope;
 
     if (geom->isEmpty()) {
@@ -157,8 +157,8 @@ Handle<Value> GeoJSONWriter::getBbox(const geos::geom::Geometry* geom) {
 }
 
 GeoJSONWriter::GeoJSONWriter() {
-    bbox = 0;
-    decimalPlaces = -1;
+    setBbox(0);
+    setRoundingPrecision(-1);
 }
 
 GeoJSONWriter::~GeoJSONWriter() {}
@@ -169,9 +169,9 @@ Handle<Value> GeoJSONWriter::SetRoundingPrecision(const Arguments& args) {
     return Undefined();
 }
 
-Handle<Value> GeoJSONWriter::SetBBox(const Arguments& args) {
+Handle<Value> GeoJSONWriter::SetBbox(const Arguments& args) {
     GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
-    writer->bbox = args[0]->BooleanValue();
+    writer->setBbox(args[0]->BooleanValue());
     return Undefined();
 }
 
@@ -183,9 +183,18 @@ void GeoJSONWriter::setRoundingPrecision(int places) {
     factor = pow(10, decimalPlaces);
 }
 
+void GeoJSONWriter::setBbox(bool _bbox) {
+    bbox = _bbox;
+}
+
 Handle<Value> GeoJSONWriter::Write(const Arguments& args) {
     GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
     return writer->write(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom);
+}
+
+Handle<Value> GeoJSONWriter::WriteBbox(const Arguments& args) {
+    GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
+    return writer->writeBbox(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom);
 }
 
 Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
@@ -221,7 +230,7 @@ Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
     }
 
     if (bbox) {
-        object->Set(String::New("bbox"), getBbox(geom));
+        object->Set(String::New("bbox"), writeBbox(geom));
     }
 
     return scope.Close(object);
