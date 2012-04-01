@@ -49,11 +49,11 @@ GeoJSONWriter.prototype.setBbox = (b) ->
   else
     _setBbox.call @, b
 
-_setRoundingPrecision = GeoJSONWriter.prototype.setRoundingPrecision
+_setRoundingPrecision2 = GeoJSONWriter.prototype.setRoundingPrecision
 
 GeoJSONWriter.prototype.setRoundingPrecision = (decimals) ->
   if not (typeof decimals == "number") then throw new Error "TypeError: input must be of type Number (int)"
   else
-    _setRoundingPrecision.call @, decimals
+    _setRoundingPrecision2.call @, decimals
 
 exports.GeoJSONWriter = GeoJSONWriter
