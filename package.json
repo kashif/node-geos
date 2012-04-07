@@ -1,5 +1,5 @@
 { "name": "geos"
-, "description": "GEOS (Geometry Engine) and PROJ.4 (Cartographic Projections) bindings for Node."
+, "description": "GEOS (Geometry Engine) bindings for Node."
 , "author": "Kashif Rasul <kashif@nomad-labs.com>"
 , "contributors" :
   [ { "name": "Paul Smith"
