@@ -1,3 +1,15 @@
+/*
+GeoJSONWriter class
+
+Writes a Geometry object (wrapped or unwrapped) to a GeoJSON (v1.0) object.
+For the The GeoJSON Format Specification see http://geojson.org/geojson-spec.html
+
+- The "coordinates" property of the exported GeoJSON object may be null, if the geometry is empty.
+- There is no "crs" property exported.
+- You can set the rounding precision and whether you want to add the "bbox" property.
+- 2/3-dimensional coordinates are supported.
+*/
+
 #ifndef GEOJSONWRITER_HPP
 #define GEOJSONWRITER_HPP
 
@@ -12,9 +24,7 @@
 #include "binding.hpp"
 #include "geometry.hpp"
 
-class GeoJSONWriter : public ObjectWrap{
-
-    /*public:*/
+class GeoJSONWriter : public ObjectWrap {
 
     protected:
         int decimalPlaces;

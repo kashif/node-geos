@@ -36,9 +36,11 @@ double GeoJSONWriter::roundNumber(double coord) {
 Handle<Array> GeoJSONWriter::coordinateToArray(const geos::geom::Coordinate* coord) {
     HandleScope scope;
 
-    Handle<Array> array = Array::New(2);
+    Handle<Array> array = Array::New();
     array->Set(0, Number::New(roundNumber(coord->x)));
     array->Set(1, Number::New(roundNumber(coord->y)));
+    if (coord->z == coord->z)
+        array->Set(2, Number::New(roundNumber(coord->z)));
 
     return scope.Close(array);
 }
@@ -217,7 +219,7 @@ Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
         if (typeId != geos::geom::GEOS_GEOMETRYCOLLECTION) {
             object->Set(String::New("coordinates"), Null());
         } else {
-            object->Set(String::New("geometries"), Null());
+            object->Set(String::New("geometries"), Array::New());
         }
     } else {
         Handle<Value> coordsOrGeom = getCoordsOrGeom(geom);
