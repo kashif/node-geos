@@ -40,7 +40,7 @@ void Geometry::Initialize(Handle<Object> target) {
 
     //GEOS binary topologic functions
     NODE_SET_PROTOTYPE_METHOD(constructor, "intersection", Geometry::Intersection);
-    //NODE_SET_PROTOTYPE_METHOD(constructor, "union", Geometry::Union);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "union", Geometry::Union);
     NODE_SET_PROTOTYPE_METHOD(constructor, "difference", Geometry::Difference);
     NODE_SET_PROTOTYPE_METHOD(constructor, "symDifference", Geometry::SymDifference);
 
@@ -179,7 +179,7 @@ NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(ConvexHull, convexHull);
 
 // GEOS binary topologic functions
 NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(Intersection, intersection);
-//NODE_GEOS_TOPOLOGIC_FUNCTION(Union, union); TODO fix the keyword problem
+NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(Union, Union);
 NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(Difference, difference);
 NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(SymDifference, symDifference);
 

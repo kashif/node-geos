@@ -136,12 +136,18 @@ tests = (vows.describe "Geometry").addBatch
     "should have a intersection function": (geom) ->
       assert.isFunction geom.intersection
       assert.ok (geom.intersection geom).equals geom
-    #"should have a union function": (geom) ->
-    #  assert.isFunction geom.union
+
+    "should have a union function": (geom) ->
+      assert.isFunction geom.union
+      geom2 = new WKTReader().read "POINT (2 2)"
+      assert.equal (geom.union geom2).toString(),
+        "MULTIPOINT (1.0000000000000000 1.0000000000000000, 2.0000000000000000 2.0000000000000000)"
+
     "should have a difference function": (geom) ->
       assert.isFunction geom.difference
       #TODO use real geometries
       assert.equal (geom.difference geom).toString(), "GEOMETRYCOLLECTION EMPTY"
+
     "should have a symDifference function": (geom) ->
       assert.isFunction geom.symDifference
       assert.equal (geom.symDifference geom).toString(), "GEOMETRYCOLLECTION EMPTY"
