@@ -15,7 +15,6 @@ Geometry.prototype.toGeoJSON = Geometry.prototype.toJSON
 
 exports.Geometry = Geometry
 
-
 _setRoundingPrecision = WKTWriter.prototype.setRoundingPrecision
 
 WKTWriter.prototype.setRoundingPrecision = (decimals) ->
@@ -31,8 +30,6 @@ WKTWriter.prototype.setTrim = (b) ->
     _setTrim.call @, b
 
 exports.WKTWriter = WKTWriter
-
-GeoJSONWriter = _geos.GeoJSONWriter
 
 _write = GeoJSONWriter.prototype.write
 
