@@ -187,37 +187,38 @@ Handle<Array> GeoJSONReader::getGeomsArray(Handle<Object> geojson) {
 
 geos::geom::Geometry* GeoJSONReader::read(Handle<Value> value) {
 
-    if (!value->IsObject())
+    if (!value->IsObject()) {
         throw "GeoJSON must be an instance of Object";
-
+    }
 
     HandleScope scope;
 
     Handle<Object> obj = Handle<Object>::Cast(value);
+
     Handle<String> typeKey = String::New("type");
-    if (!obj->HasOwnProperty(typeKey))
+
+    if (!obj->HasOwnProperty(typeKey)) {
         throw "Property \"type\" is missing";
+    }
 
-
-    Handle<String> v = obj->Get(typeKey)->ToString();
-    char* string = (char*)malloc(v->Utf8Length() * sizeof(char));
-    v->WriteAscii(string);
+    std::string string = *String::Utf8Value(obj->Get(typeKey)->ToString());
 
     geos::geom::Geometry* g;
+
     try {
-        if (!strcmp(string, "Point")) {
+        if (string == "Point") {
             g = getPoint(getCoordsArray(obj));
-        } else if (!strcmp(string, "LineString")) {
+        } else if (string == "LineString") {
             g = getLineString(getCoordsArray(obj));
-        } else if (!strcmp(string, "Polygon")) {
+        } else if (string == "Polygon") {
             g = getPolygon(getCoordsArray(obj));
-        } else if (!strcmp(string, "MultiPoint")) {
+        } else if (string == "MultiPoint") {
             g = getMultiPoint(getCoordsArray(obj));
-        } else if (!strcmp(string, "MultiLineString")) {
+        } else if (string == "MultiLineString") {
             g = getMultiLineString(getCoordsArray(obj));
-        } else if (!strcmp(string, "MultiPolygon")) {
+        } else if (string == "MultiPolygon") {
             g = getMultiPolygon(getCoordsArray(obj));
-        } else if (!strcmp(string, "GeometryCollection")) {
+        } else if (string == "GeometryCollection") {
             g = getGeometryCollection(getGeomsArray(obj));
         }
         else {
@@ -225,12 +226,9 @@ geos::geom::Geometry* GeoJSONReader::read(Handle<Value> value) {
         }
     }
     catch (...) {
-        free(string);
         throw;
     }
 
-
-    free(string);
     return g;
 }
 
