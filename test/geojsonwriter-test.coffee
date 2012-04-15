@@ -19,8 +19,8 @@ tests = (vows.describe "GeoJSONWriter").addBatch
       assert.equal json.type, 'Point'
 
     "has undefined coordinates and bbox": (json) ->
-      assert.strictEqual json.coordinates, null
-      assert.strictEqual json.bbox, null
+      assert.isNull json.coordinates
+      assert.isNull json.bbox
 
   "An empty geometry collection JSON":
     topic: ->
@@ -30,8 +30,8 @@ tests = (vows.describe "GeoJSONWriter").addBatch
       assert.equal json.type, 'GeometryCollection'
 
     "has correct geometries and bbox": (json) ->
-      assert.strictEqual json.geometries, []
-      assert.strictEqual json.bbox, null
+      assert.deepEqual json.geometries, []
+      assert.isNull json.bbox
 
   "A geometry JSON":
     topic: ->
