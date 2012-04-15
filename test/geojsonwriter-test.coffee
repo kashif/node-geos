@@ -29,8 +29,8 @@ tests = (vows.describe "GeoJSONWriter").addBatch
     "is an object with correct type": (json) ->
       assert.equal json.type, 'GeometryCollection'
 
-    "has undefined coordinates and bbox": (json) ->
-      assert.strictEqual json.geometries, null
+    "has correct geometries and bbox": (json) ->
+      assert.strictEqual json.geometries, []
       assert.strictEqual json.bbox, null
 
   "A geometry JSON":

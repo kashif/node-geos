@@ -22,7 +22,7 @@
     , "email": "mail@akidee.de"
     }
   ]
-, "version": "0.0.2"
+, "version": "0.0.3"
 , "licenses": [
   { "type": "MIT"
   , "url": "https://github.com/kashif/project/raw/master/LICENSE"
@@ -48,6 +48,6 @@
     "vows": ">=0.5.13"
   }
 , "engines":
-  { "node": ">=0.6.0"
+  { "node": ">=0.6.0 <0.7.0"
   }
 }

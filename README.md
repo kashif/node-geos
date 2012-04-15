@@ -19,7 +19,7 @@ To obtain and build the bindings:
 
 or install it via [npm](http://npmjs.org/):
 
-    npm install geos (outdated version)
+    npm install geos
 
 or
 
