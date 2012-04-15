@@ -33,6 +33,10 @@ class GeoJSONWriter : public ObjectWrap {
 
     private:
         static Persistent<FunctionTemplate> constructor;
+        static Persistent<String> symbolType;
+        static Persistent<String> symbolCoordinates;
+        static Persistent<String> symbolGeometries;
+        static Persistent<String> symbolBbox;
 
     public:
         GeoJSONWriter();

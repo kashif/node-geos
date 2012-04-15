@@ -2,6 +2,12 @@
 
 Persistent<FunctionTemplate> GeoJSONWriter::constructor;
 
+// v8 symbols
+Persistent<String> GeoJSONWriter::symbolType;
+Persistent<String> GeoJSONWriter::symbolCoordinates;
+Persistent<String> GeoJSONWriter::symbolGeometries;
+Persistent<String> GeoJSONWriter::symbolBbox;
+
 void GeoJSONWriter::Initialize(Handle<Object> target) {
     HandleScope scope;
 
@@ -15,6 +21,11 @@ void GeoJSONWriter::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(constructor, "setBbox", GeoJSONWriter::SetBbox);
 
     target->Set(String::NewSymbol("GeoJSONWriter"), constructor->GetFunction());
+
+    symbolType = Persistent<String>::New(String::NewSymbol("type"));
+    symbolCoordinates = Persistent<String>::New(String::NewSymbol("coordinates"));
+    symbolGeometries = Persistent<String>::New(String::NewSymbol("geometries"));
+    symbolBbox = Persistent<String>::New(String::NewSymbol("bbox"));
 }
 
 Handle<Value> GeoJSONWriter::New(const Arguments& args) {
@@ -207,7 +218,7 @@ Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
     int typeId = geom->getGeometryTypeId();
 
     object->Set(
-        String::New("type"),
+        symbolType,
         String::New(
             typeId == geos::geom::GEOS_LINESTRING || typeId == geos::geom::GEOS_LINEARRING
                 ? "LineString"
@@ -217,22 +228,22 @@ Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
 
     if (geom->isEmpty()) {
         if (typeId != geos::geom::GEOS_GEOMETRYCOLLECTION) {
-            object->Set(String::New("coordinates"), Null());
+            object->Set(symbolCoordinates, Null());
         } else {
-            object->Set(String::New("geometries"), Array::New());
+            object->Set(symbolGeometries, Array::New());
         }
     } else {
         Handle<Value> coordsOrGeom = getCoordsOrGeom(geom);
 
         if (typeId != geos::geom::GEOS_GEOMETRYCOLLECTION) {
-            object->Set(String::New("coordinates"), coordsOrGeom);
+            object->Set(symbolCoordinates, coordsOrGeom);
         } else {
-            object->Set(String::New("geometries"), coordsOrGeom);
+            object->Set(symbolGeometries, coordsOrGeom);
         }
     }
 
     if (bbox) {
-        object->Set(String::New("bbox"), writeBbox(geom));
+        object->Set(symbolBbox, writeBbox(geom));
     }
 
     return scope.Close(object);
