@@ -76,7 +76,7 @@ double GeoJSONReader::valueToDouble(Handle<Value> value) {
 }
 
 geos::geom::Coordinate GeoJSONReader::getCoordinate(Handle<Value> value, bool acceptArrayOnly) {
-    
+
     bool isArray = value->IsArray();
 
     if (acceptArrayOnly) {
@@ -127,7 +127,7 @@ geos::geom::CoordinateSequence* GeoJSONReader::getCoordinates(Handle<Value> valu
 
     uint32_t length = array->Length();
     geos::geom::CoordinateSequence* sequence = coordinateSequenceFactory->create(length, 3);
-    
+
     try {
         for (uint32_t i = 0; i < length; i++) {
 
@@ -237,7 +237,7 @@ geos::geom::Geometry* GeoJSONReader::read(Handle<Value> value) {
 geos::geom::Point* GeoJSONReader::getPoint(Handle<Value> coords) {
 
     geos::geom::Coordinate coord = getCoordinate(coords, 0);
-    
+
     return geometryFactory->createPoint(coord);
 }
 
@@ -247,7 +247,7 @@ geos::geom::LineString* GeoJSONReader::getLineString(Handle<Value> coords) {
 
         return geometryFactory->createLineString(getCoordinates(coords));
     }
-    
+
 
     return geometryFactory->createLineString();
 }
@@ -280,9 +280,9 @@ geos::geom::Polygon* GeoJSONReader::getPolygon(Handle<Value> coords) {
         }
 
 
-        return geometryFactory->createPolygon(shell, holes);        
+        return geometryFactory->createPolygon(shell, holes);
     }
-    
+
 
     return geometryFactory->createPolygon();
 }
@@ -293,7 +293,7 @@ geos::geom::MultiPoint* GeoJSONReader::getMultiPoint(Handle<Value> coords) {
 
         return geometryFactory->createMultiPoint(*getCoordinates(coords));
     }
-    
+
 
     return geometryFactory->createMultiPoint();
 }
@@ -320,9 +320,9 @@ geos::geom::MultiLineString* GeoJSONReader::getMultiLineString(Handle<Value> coo
         }
 
 
-        return geometryFactory->createMultiLineString(geoms);        
+        return geometryFactory->createMultiLineString(geoms);
     }
-    
+
 
     return geometryFactory->createMultiLineString();
 }
@@ -349,9 +349,9 @@ geos::geom::MultiPolygon* GeoJSONReader::getMultiPolygon(Handle<Value> coords) {
         }
 
 
-        return geometryFactory->createMultiPolygon(geoms);        
+        return geometryFactory->createMultiPolygon(geoms);
     }
-    
+
 
     return geometryFactory->createMultiPolygon();
 }
@@ -375,5 +375,5 @@ geos::geom::GeometryCollection* GeoJSONReader::getGeometryCollection(Handle<Arra
     }
 
 
-    return geometryFactory->createGeometryCollection(geoms);        
+    return geometryFactory->createGeometryCollection(geoms);
 }
