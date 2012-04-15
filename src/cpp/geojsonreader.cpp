@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "geojsonreader.hpp"
 
 Persistent<FunctionTemplate> GeoJSONReader::constructor;
