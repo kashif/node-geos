@@ -1,21 +1,23 @@
 {print} = require "util"
-{spawn, exec} = require "child_process"
+_spawn = (require "child_process").spawn
 
 coffeeBin = "./node_modules/coffee-script/bin/coffee"
 vows = "./node_modules/vows/bin/vows"
 
+spawn = (command, options) ->
+  program = _spawn command, options
+  program.stdout.on "data", (data) -> print data.toString()
+  program.stderr.on "data", (data) -> print data.toString()
+  program #return program
+
 buildBinary = ->
-  waf = spawn "node-waf", ["configure", "build"]
-  waf.stdout.on "data", (data) -> print data.toString()
-  waf.stderr.on "data", (data) -> print data.toString()
+  spawn "node-waf", ["configure", "build"]
 
 build = (src, dst, watch) ->
   options = ["-c", "-o", dst, src]
   options.unshift "-w" if watch
 
-  coffee = spawn coffeeBin, options
-  coffee.stdout.on "data", (data) -> print data.toString()
-  coffee.stderr.on "data", (data) -> print data.toString()
+  spawn coffeeBin, options
 
 task "binary", "Compile C++ Code", ->
   buildBinary()
@@ -34,6 +36,10 @@ task "watch", "Recompile CoffeeScript source files when modified", ->
   build "examples", "examples", true
 
 task "test", "Run the geos tests", ->
-  vows = spawn vows
-  vows.stdout.on "data", (data) -> print data.toString()
-  vows.stderr.on "data", (data) -> print data.toString()
+  spawn vows
+
+task "clean", "Remove all \"binary\" data", ->
+  spawn "node-waf", ["clean"]
+  spawn "rm", [".lock-wscript"]
+  spawn "rm", ["-r", "./build/"]
+  spawn "rm", ["./lib/index.js"]
