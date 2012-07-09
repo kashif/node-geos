@@ -18,8 +18,8 @@ tests = (vows.describe "Geometry").addBatch
     "a new instance should be an instance of WKTWriter": (writer) ->
       assert.instanceOf writer, WKBWriter
 
-    "should have a write function": (writer) ->
-      assert.isFunction writer.write
+    "should have a writeHEX function": (writer) ->
+      assert.isFunction writer.writeHEX
 
     "should write a Polygon to WKB in hex format": (writer) ->
       assert.equal (writer.writeHEX reader.read "POINT(1 2)"),
