@@ -9,6 +9,7 @@ sources = [
     "./src/cpp/geometry.cpp",
     "./src/cpp/wktreader.cpp",
     "./src/cpp/wktwriter.cpp",
+    "./src/cpp/wkbwriter.cpp",
     "./src/cpp/geometryfactory.cpp",
     "./src/cpp/precisionmodel.cpp",
     "./src/cpp/quadtree.cpp",
