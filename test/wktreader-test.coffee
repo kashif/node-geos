@@ -25,8 +25,10 @@ tests = (vows.describe "WKTReader").addBatch
       assert.instanceOf geom, Geometry
       assert.equal geom.toString(), "POINT (1.0000000000000000 1.0000000000000000)"
 
-    "should throw an exception on malformed WKT": (reader) ->
-      assert.throws reader.read, Error
+    "should throw an exception on undefined input": (reader) ->
+      fn = ->
+        reader.read()
+      assert.throws fn, Error
 
     "should throw another exception on invalid WKT": (reader) ->
       fn = ->
