@@ -13,6 +13,8 @@
         "src/cpp/geojsonwriter.cpp",
         "src/cpp/geojsonreader.cpp"
       ],
+      'cflags!': [ '-fno-exceptions', '-fno-rtti' ],
+      'cflags_cc!': [ '-fno-exceptions', '-fno-rtti' ],
       'conditions': [
         ['OS=="win"', {
           # no Windows support yet...
@@ -22,8 +24,10 @@
           ],
         }],
         ['OS=="mac"', {
-          # cflags on OS X defined like this TODO: check
           'xcode_settings': {
+            'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+            'GCC_ENABLE_CPP_RTTI': 'YES',
+            # cflags on OS X defined like this TODO: check
             'OTHER_CFLAGS': [
               '<!@(geos-config --cflags)'
             ]
