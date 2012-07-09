@@ -14,7 +14,7 @@ To obtain and build the bindings:
 
     git clone git://github.com/kashif/node-geos.git
     cd node-geos
-    node-waf configure build
+    node-gyp configure build
     # npm install
 
 or install it via [npm](http://npmjs.org/):
