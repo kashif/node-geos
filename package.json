@@ -35,20 +35,19 @@
   { "url": "http://github.com/kashif/node-geos/issues"
   }
 , "scripts":
-  { "preinstall": "node-gyp clean || true; node-gyp configure build"
-  , "install" : "./node_modules/coffee-script/bin/cake install"
+  {
+    "install" : "./node_modules/coffee-script/bin/cake install"
   , "test": "vows"
   }
 , "main": "./lib"
 , "dependencies":
   {
     "coffee-script": "*",
-    "node-gyp": "*"
+    "node-gyp": ">=0.5.7"
   }
 , "devDependencies":
   {
     "vows": ">=0.5.13"
-  , "node-gyp": ">=0.5.7"
   }
 , "engines":
   { "node": ">=0.6.0"
