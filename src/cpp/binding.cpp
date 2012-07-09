@@ -23,7 +23,6 @@ extern "C" {
         PrecisionModel::Initialize(target);
         GeoJSONWriter::Initialize(target);
         GeoJSONReader::Initialize(target);
-        DouglasPeuckerSimplifier::Initialize(target);
     }
 
     NODE_MODULE(geos, init)
