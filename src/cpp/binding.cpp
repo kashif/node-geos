@@ -4,7 +4,6 @@
 #include "geometry.hpp"
 #include "geometryfactory.hpp"
 #include "precisionmodel.hpp"
-#include "quadtree.hpp"
 #include "geojsonwriter.hpp"
 #include "geojsonreader.hpp"
 
@@ -20,7 +19,6 @@ extern "C" {
         WKTWriter::Initialize(target);
         GeometryFactory::Initialize(target);
         PrecisionModel::Initialize(target);
-        Quadtree::Initialize(target);
         GeoJSONWriter::Initialize(target);
         GeoJSONReader::Initialize(target);
     }

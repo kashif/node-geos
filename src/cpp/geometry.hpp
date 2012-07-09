@@ -13,12 +13,12 @@
         bool result;                                                                    \
     } geosmethod##_baton_t;                                                             \
                                                                                         \
-    void Geometry::EIO_##cppmethod(eio_req *req) {                                      \
+    void Geometry::EIO_##cppmethod(uv_work_t *req) {                                    \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         closure->result = closure->geom->_geom->geosmethod();                           \
     }                                                                                   \
                                                                                         \
-    int Geometry::EIO_After##cppmethod(eio_req *req) {                                  \
+    void Geometry::EIO_After##cppmethod(uv_work_t *req) {                               \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         Local<Value> argv[2] = { Local<Value>::New(Null()), Local<Value>::New(closure->result ? True() : False()) }; \
         TryCatch tryCatch;                                                              \
@@ -30,11 +30,10 @@
                                                                                         \
         closure->cb.Dispose();                                                          \
         closure->geom->Unref();                                                         \
-        ev_unref(EV_DEFAULT_UC);                                                        \
+        uv_unref((uv_handle_t*) req);                                                   \
                                                                                         \
         delete closure;                                                                 \
-                                                                                        \
-        return 0;                                                                       \
+        delete req;                                                                     \
                                                                                         \
     }                                                                                   \
     Handle<Value> Geometry::cppmethod(const Arguments& args)                            \
@@ -45,8 +44,10 @@
             geosmethod##_baton_t *closure = new geosmethod##_baton_t();                 \
             closure->geom = geom;                                                       \
             closure->cb = Persistent<Function>::New(Handle<Function>::Cast(args[0]));   \
-            eio_custom(EIO_##cppmethod, EIO_PRI_DEFAULT, EIO_After##cppmethod, closure);\
-            ev_ref(EV_DEFAULT_UC);                                                      \
+            uv_work_t *req = new uv_work_t;                                             \
+            req->data = closure;                                                        \
+            uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
+            uv_ref((uv_handle_t*) &req);                                                \
             geom->Ref();                                                                \
             return Undefined();                                                         \
         } else {                                                                        \
@@ -57,7 +58,7 @@
             }                                                                           \
             return Undefined();                                                         \
         }                                                                               \
-    };
+    }
 
 
 #define NODE_GEOS_BINARY_PREDICATE(cppmethod, geosmethod)                               \
@@ -68,12 +69,12 @@
         bool result;                                                                    \
     } geosmethod##_baton_t;                                                             \
                                                                                         \
-    void Geometry::EIO_##cppmethod(eio_req *req) {                                      \
+    void Geometry::EIO_##cppmethod(uv_work_t *req) {                                    \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         closure->result = closure->geom->_geom->geosmethod(closure->geom2->_geom);      \
     }                                                                                   \
                                                                                         \
-    int Geometry::EIO_After##cppmethod(eio_req *req) {                                  \
+    void Geometry::EIO_After##cppmethod(uv_work_t *req) {                               \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         Local<Value> argv[2] = { Local<Value>::New(Null()), Local<Value>::New(closure->result ? True() : False()) }; \
         TryCatch tryCatch;                                                              \
@@ -86,11 +87,10 @@
         closure->cb.Dispose();                                                          \
         closure->geom->Unref();                                                         \
         closure->geom2->_unref();                                                       \
-        ev_unref(EV_DEFAULT_UC);                                                        \
+        uv_unref((uv_handle_t*) &req);                                                  \
                                                                                         \
         delete closure;                                                                 \
-                                                                                        \
-        return 0;                                                                       \
+        delete req;                                                                     \
                                                                                         \
     }                                                                                   \
     Handle<Value> Geometry::cppmethod(const Arguments& args)                            \
@@ -103,8 +103,10 @@
             closure->geom = geom;                                                       \
             closure->geom2 = geom2;                                                     \
             closure->cb = Persistent<Function>::New(Handle<Function>::Cast(args[1]));   \
-            eio_custom(EIO_##cppmethod, EIO_PRI_DEFAULT, EIO_After##cppmethod, closure);\
-            ev_ref(EV_DEFAULT_UC);                                                      \
+            uv_work_t *req = new uv_work_t;                                             \
+            req->data = closure;                                                        \
+            uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
+            uv_ref((uv_handle_t*) &req);                                                      \
             geom->Ref();                                                                \
             geom2->_ref();                                                              \
             return Undefined();                                                         \
@@ -116,7 +118,7 @@
             }                                                                           \
             return Undefined();                                                         \
         }                                                                               \
-    };
+    }
 
 
 #define NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)               \
@@ -145,8 +147,8 @@
 
 #define NODE_GEOS_V8_FUNCTION(cppmethod) \
     static Handle<Value> cppmethod(const Arguments& args); \
-    static void EIO_##cppmethod(eio_req *req); \
-    static int EIO_After##cppmethod(eio_req *req); \
+    static void EIO_##cppmethod(uv_work_t *req); \
+    static void EIO_After##cppmethod(uv_work_t *req); \
 
 class Geometry : public ObjectWrap {
  public:

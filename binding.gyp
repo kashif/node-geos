@@ -9,7 +9,6 @@
         "src/cpp/wktwriter.cpp",
         "src/cpp/geometryfactory.cpp",
         "src/cpp/precisionmodel.cpp",
-        "src/cpp/quadtree.cpp",
         "src/cpp/geojsonwriter.cpp",
         "src/cpp/geojsonreader.cpp"
       ],
