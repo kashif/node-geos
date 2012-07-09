@@ -41,7 +41,8 @@
 , "main": "./lib"
 , "dependencies":
   {
-    "coffee-script": "*"
+    "coffee-script": "*",
+    "node-gyp": "*"
   }
 , "devDependencies":
   {

@@ -3,6 +3,7 @@ _spawn = (require "child_process").spawn
 
 coffeeBin = "./node_modules/coffee-script/bin/coffee"
 vows = "./node_modules/vows/bin/vows"
+nodeGyp = "./node_modules/node-gyp/bin/node-gyp.js"
 
 spawn = (command, options) ->
   program = _spawn command, options
@@ -11,7 +12,7 @@ spawn = (command, options) ->
   program #return program
 
 buildBinary = ->
-  spawn "node-waf", ["configure", "build"]
+  spawn nodeGyp, ["rebuild"]
 
 build = (src, dst, watch) ->
   options = ["-c", "-o", dst, src]
@@ -39,7 +40,5 @@ task "test", "Run the geos tests", ->
   spawn vows
 
 task "clean", "Remove all \"binary\" data", ->
-  spawn "node-waf", ["clean"]
-  spawn "rm", [".lock-wscript"]
-  spawn "rm", ["-r", "./build/"]
+  spawn nodeGyp, ["clean"]
   spawn "rm", ["./lib/index.js"]
