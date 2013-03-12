@@ -18,7 +18,8 @@
         closure->result = closure->geom->_geom->geosmethod();                           \
     }                                                                                   \
                                                                                         \
-    void Geometry::EIO_After##cppmethod(uv_work_t *req) {                               \
+    void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
+        assert(status == 0);                                                            \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         Local<Value> argv[2] = { Local<Value>::New(Null()), Local<Value>::New(closure->result ? True() : False()) }; \
         TryCatch tryCatch;                                                              \
@@ -74,7 +75,8 @@
         closure->result = closure->geom->_geom->geosmethod(closure->geom2->_geom);      \
     }                                                                                   \
                                                                                         \
-    void Geometry::EIO_After##cppmethod(uv_work_t *req) {                               \
+    void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
+        assert(status == 0);                                                            \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         Local<Value> argv[2] = { Local<Value>::New(Null()), Local<Value>::New(closure->result ? True() : False()) }; \
         TryCatch tryCatch;                                                              \
@@ -148,7 +150,7 @@
 #define NODE_GEOS_V8_FUNCTION(cppmethod) \
     static Handle<Value> cppmethod(const Arguments& args); \
     static void EIO_##cppmethod(uv_work_t *req); \
-    static void EIO_After##cppmethod(uv_work_t *req); \
+    static void EIO_After##cppmethod(uv_work_t *req, int status); \
 
 class Geometry : public ObjectWrap {
  public:
