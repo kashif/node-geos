@@ -2,7 +2,7 @@
   _Geometry
   WKTWriter
   GeoJSONWriter
-} = exports = module.exports = require("../build/Release/geos")
+} = exports = module.exports = require("../build/Debug/geos")
 
 _Geometry = exports.Geometry
 
