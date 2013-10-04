@@ -23,6 +23,7 @@ class GeometryFactory : public ObjectWrap {
 
         static Handle<Value> GetPrecisionModel(const Arguments& args);
         static Handle<Value> GetSRID(const Arguments& args);
+        static Handle<Value> Destroy(const Arguments& args);
 
     protected:
 
