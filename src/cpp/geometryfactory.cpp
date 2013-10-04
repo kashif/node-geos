@@ -25,6 +25,7 @@ void GeometryFactory::Initialize(Handle<Object> target) {
 
     NODE_SET_PROTOTYPE_METHOD(constructor, "getPrecisionModel", GetPrecisionModel);
     NODE_SET_PROTOTYPE_METHOD(constructor, "getSRID", GetSRID);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "destroy", Destroy);
 
     target->Set(String::NewSymbol("GeometryFactory"), constructor->GetFunction());
 }
@@ -56,4 +57,12 @@ Handle<Value> GeometryFactory::GetPrecisionModel(const Arguments& args) {
     HandleScope scope;
     GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
     return scope.Close(PrecisionModel::New(factory->_factory->getPrecisionModel()));
+}
+
+Handle<Value> GeometryFactory::Destroy(const Arguments& args) {
+  HandleScope scope;
+  GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
+  Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+  factory->_factory->destroyGeometry(geom->_geom);
+  return Undefined();
 }
