@@ -1,14 +1,12 @@
-#node-geos
+# node-geos
 
-[GEOS (Geometry Engine)](http://trac.osgeo.org/geos/) bindings for Node.
+[GEOS (Geometry Engine)](http://trac.osgeo.org/geos/) bindings for [Node.js](http://nodejs.org/).
 
-##Prerequisites
+## Prerequisites
 
-Required node version is 0.6.0 or higher.
-Make sure you have GEOS version 3.2.2 or higher installed together with the
-headers and libraries.
+Required node version is 0.10.0 or higher. Make sure you have GEOS version 3.2.2 or higher installed together with the headers and libraries.
 
-##Installation
+## Installation
 
 To obtain and build the bindings:
 
@@ -25,23 +23,20 @@ or
 
     npm install git://github.com/kashif/node-geos.git
 
-##Testing
+## Testing
 
     npm test
 
-To test the c++ binding we use vows. Just run vows on the tests in the test
-directory or use the above command. Make sure you have coffee-script installed as they are written in
-coffee-script.
+To test the c++ binding we use [Vows](http://vowsjs.org/). Just run `vows` on the tests in the `test/` directory or use the above command. Make sure you have [CoffeeScript](http://coffeescript.org/) installed as they are written in CoffeeScript.
 
 As continuous integration system we use [travis](http://travis-ci.org).
 
 Build status: [![Build Status](https://secure.travis-ci.org/kashif/node-geos.png)](http://travis-ci.org/kashif/node-geos)
 
-##Examples
+## Examples
 
-For some examples please take a look at the `examples` directory.
+For some examples please take a look at the `examples/` directory.
 
-##Bugs
+## Bugs
 
-Report bugs to
-[http://github.com/kashif/node-geos/issues](http://github.com/kashif/node-geos/issues).
+Report bugs to [http://github.com/kashif/node-geos/issues](http://github.com/kashif/node-geos/issues).

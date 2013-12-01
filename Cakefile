@@ -37,7 +37,7 @@ task "watch", "Recompile CoffeeScript source files when modified", ->
   build "examples", "examples", true
 
 task "test", "Run the geos tests", ->
-  spawn vows
+  spawn vows, ["--spec"]
 
 task "clean", "Remove all \"binary\" data", ->
   spawn nodeGyp, ["clean"]
