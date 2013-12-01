@@ -25,9 +25,9 @@
         }],
         ['OS=="mac"', {
           'xcode_settings': {
+            'MACOSX_DEPLOYMENT_TARGET': '10.8',
             'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
             'GCC_ENABLE_CPP_RTTI': 'YES',
-            # cflags on OS X defined like this TODO: check
             'OTHER_CFLAGS': [
               '<!@(geos-config --cflags)'
             ]
