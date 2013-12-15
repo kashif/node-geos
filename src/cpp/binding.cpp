@@ -1,5 +1,6 @@
 #include "binding.hpp"
 #include "wktreader.hpp"
+#include "wkbreader.hpp"
 #include "wktwriter.hpp"
 #include "wkbwriter.hpp"
 #include "geometry.hpp"
@@ -17,6 +18,7 @@ extern "C" {
 
         Geometry::Initialize(target);
         WKTReader::Initialize(target);
+        WKBReader::Initialize(target);
         WKTWriter::Initialize(target);
         WKBWriter::Initialize(target);
         GeometryFactory::Initialize(target);
