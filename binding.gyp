@@ -6,6 +6,7 @@
         "src/cpp/binding.cpp",
         "src/cpp/geometry.cpp",
         "src/cpp/wktreader.cpp",
+        "src/cpp/wkbreader.cpp",
         "src/cpp/wktwriter.cpp",
         "src/cpp/wkbwriter.cpp",
         "src/cpp/geometryfactory.cpp",
