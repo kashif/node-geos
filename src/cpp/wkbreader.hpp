@@ -17,7 +17,7 @@ class WKBReader : public ObjectWrap {
         static void Initialize(Handle<Object> target);
         static Persistent<FunctionTemplate> constructor;
         static Handle<Value> New(const Arguments& args);
-        static Handle<Value> Read(const Arguments& args);
+        static Handle<Value> ReadHEX(const Arguments& args);
 
     protected:
 
