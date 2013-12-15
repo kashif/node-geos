@@ -21,7 +21,7 @@ void WKBReader::Initialize(Handle<Object> target)
     constructor->InstanceTemplate()->SetInternalFieldCount(1);
     constructor->SetClassName(String::NewSymbol("WKBReader"));
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "read", WKBReader::Read);
+    NODE_SET_PROTOTYPE_METHOD(constructor, "readHEX", WKBReader::ReadHEX);
 
     target->Set(String::NewSymbol("WKBReader"), constructor->GetFunction());
 }
@@ -42,7 +42,7 @@ Handle<Value> WKBReader::New(const Arguments& args)
     return args.This();
 }
 
-Handle<Value> WKBReader::Read(const Arguments& args)
+Handle<Value> WKBReader::ReadHEX(const Arguments& args)
 {
     HandleScope scope;
     WKBReader* reader = ObjectWrap::Unwrap<WKBReader>(args.This());
