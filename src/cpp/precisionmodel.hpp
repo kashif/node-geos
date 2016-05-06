@@ -14,16 +14,16 @@ class PrecisionModel : public ObjectWrap {
         geos::geom::PrecisionModel *_model;
 
         static void Initialize(Handle<Object> target);
-        static Persistent<FunctionTemplate> constructor;
-        static Handle<Value> New(const Arguments& args);
+        static Persistent<Function> constructor;
+        static void New(const FunctionCallbackInfo<Value>& args);
         static Handle<Value> New(const geos::geom::PrecisionModel *model);
-        static Handle<Value> GetType(const Arguments& args);
-        static Handle<Value> GetScale(const Arguments& args);
-        static Handle<Value> GetOffsetX(const Arguments& args);
-        static Handle<Value> GetOffsetY(const Arguments& args);
-        static Handle<Value> ToString(const Arguments& args);
-        static Handle<Value> IsFloating(const Arguments& args);
-        static Handle<Value> CompareTo(const Arguments& args);
+        static void GetType(const FunctionCallbackInfo<Value>& args);
+        static void GetScale(const FunctionCallbackInfo<Value>& args);
+        static void GetOffsetX(const FunctionCallbackInfo<Value>& args);
+        static void GetOffsetY(const FunctionCallbackInfo<Value>& args);
+        static void ToString(const FunctionCallbackInfo<Value>& args);
+        static void IsFloating(const FunctionCallbackInfo<Value>& args);
+        static void CompareTo(const FunctionCallbackInfo<Value>& args);
 
     protected:
 

@@ -11,24 +11,29 @@ WKBReader::WKBReader(const geos::geom::GeometryFactory *gf) {
 
 WKBReader::~WKBReader() {}
 
-Persistent<FunctionTemplate> WKBReader::constructor;
+Persistent<Function> WKBReader::constructor;
 
 void WKBReader::Initialize(Handle<Object> target)
 {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(WKBReader::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("WKBReader"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, WKBReader::New);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "WKBReader"));
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "readHEX", WKBReader::ReadHEX);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "readHEX", WKBReader::ReadHEX);
 
-    target->Set(String::NewSymbol("WKBReader"), constructor->GetFunction());
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "WKBReader"), tpl->GetFunction());
 }
 
-Handle<Value> WKBReader::New(const Arguments& args)
+void WKBReader::New(const FunctionCallbackInfo<Value>& args)
 {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKBReader *wkbReader;
 
     if(args.Length() == 1) {
@@ -39,24 +44,26 @@ Handle<Value> WKBReader::New(const Arguments& args)
     }
 
     wkbReader->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
-Handle<Value> WKBReader::ReadHEX(const Arguments& args)
+void WKBReader::ReadHEX(const FunctionCallbackInfo<Value>& args)
 {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKBReader* reader = ObjectWrap::Unwrap<WKBReader>(args.This());
-    v8::String::AsciiValue hex(args[0]->ToString());
-    std::string  str = std::string(*hex);
+    String::Utf8Value hex(args[0]->ToString());
+    std::string str = std::string(*hex);
     std::istringstream is( str );
     try {
         geos::geom::Geometry* geom = reader->_reader->readHEX(is);
-        return scope.Close(Geometry::New(geom));
+        args.GetReturnValue().Set(Geometry::New(geom));
     } catch (geos::io::ParseException e) {
-        return ThrowException(Exception::Error(String::New(e.what())));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, e.what())));
     } catch (geos::util::GEOSException e) {
-        return ThrowException(Exception::Error(String::New(e.what())));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, e.what())));
     } catch (...) {
-        return ThrowException(Exception::Error(String::New("Exception while reading WKB.")));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Exception while reading WKB.")));
     }
 }

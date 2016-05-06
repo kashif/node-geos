@@ -15,9 +15,9 @@ class WKBReader : public ObjectWrap {
         WKBReader(const geos::geom::GeometryFactory *gf);
         ~WKBReader();
         static void Initialize(Handle<Object> target);
-        static Persistent<FunctionTemplate> constructor;
-        static Handle<Value> New(const Arguments& args);
-        static Handle<Value> ReadHEX(const Arguments& args);
+        static Persistent<Function> constructor;
+        static void New(const FunctionCallbackInfo<Value>& args);
+        static void ReadHEX(const FunctionCallbackInfo<Value>& args);
 
     protected:
 

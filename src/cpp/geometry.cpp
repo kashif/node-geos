@@ -8,116 +8,141 @@ Geometry::Geometry(geos::geom::Geometry *geom) : ObjectWrap() {
 
 Geometry::~Geometry() {}
 
-Persistent<FunctionTemplate> Geometry::constructor;
+Persistent<Function> Geometry::constructor;
 
 void Geometry::Initialize(Handle<Object> target) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(Geometry::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("Geometry"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, Geometry::New);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "toString", Geometry::ToString);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "Geometry"));
+
+
+    NODE_SET_PROTOTYPE_METHOD(tpl, "toString", Geometry::ToString);
     //GEOS unary predicates
-    NODE_SET_PROTOTYPE_METHOD(constructor, "isSimple", Geometry::IsSimple);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "isValid", Geometry::IsValid);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "isEmpty", Geometry::IsEmpty);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "isRectangle", Geometry::IsRectangle);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "isSimple", Geometry::IsSimple);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "isValid", Geometry::IsValid);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "isEmpty", Geometry::IsEmpty);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "isRectangle", Geometry::IsRectangle);
     //GEOS binary predicates
     //TODO maybe define a macro for this too
-    NODE_SET_PROTOTYPE_METHOD(constructor, "disjoint", Geometry::Disjoint);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "touches", Geometry::Touches);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "intersects", Geometry::Intersects);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "crosses", Geometry::Crosses);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "within", Geometry::Within);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "contains", Geometry::Contains);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "overlaps", Geometry::Overlaps);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "equals", Geometry::Equals);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "covers", Geometry::Covers);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "coveredBy", Geometry::CoveredBy);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "disjoint", Geometry::Disjoint);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "touches", Geometry::Touches);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "intersects", Geometry::Intersects);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "crosses", Geometry::Crosses);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "within", Geometry::Within);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "contains", Geometry::Contains);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "overlaps", Geometry::Overlaps);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "equals", Geometry::Equals);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "covers", Geometry::Covers);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "coveredBy", Geometry::CoveredBy);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "isWithinDistance", Geometry::IsWithinDistance);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "isWithinDistance", Geometry::IsWithinDistance);
 
     //GEOS binary topologic functions
-    NODE_SET_PROTOTYPE_METHOD(constructor, "intersection", Geometry::Intersection);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "union", Geometry::Union);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "difference", Geometry::Difference);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "symDifference", Geometry::SymDifference);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "intersection", Geometry::Intersection);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "union", Geometry::Union);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "difference", Geometry::Difference);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "symDifference", Geometry::SymDifference);
 
     //GEOS unary topologic functions
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getEnvelope", Geometry::GetEnvelope);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getBoundary", Geometry::GetBoundary);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "convexHull", Geometry::ConvexHull);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getEnvelope", Geometry::GetEnvelope);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getBoundary", Geometry::GetBoundary);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "convexHull", Geometry::ConvexHull);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "buffer", Geometry::Buffer);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "buffer", Geometry::Buffer);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "distance", Geometry::Distance);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "distance", Geometry::Distance);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getArea", Geometry::GetArea);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getLength", Geometry::GetLength);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getSRID", Geometry::GetSRID);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "setSRID", Geometry::SetSRID);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getArea", Geometry::GetArea);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getLength", Geometry::GetLength);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getSRID", Geometry::GetSRID);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setSRID", Geometry::SetSRID);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getGeometryType", Geometry::GetGeometryType);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getGeometryType", Geometry::GetGeometryType);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "toJSON", Geometry::ToJSON);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "toJSON", Geometry::ToJSON);
 
-    target->Set(String::NewSymbol("Geometry"), constructor->GetFunction());
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "Geometry"), tpl->GetFunction());
 }
 
 Handle<Value> Geometry::New(geos::geom::Geometry *geometry) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry *geom = new Geometry(geometry);
-    Handle<Value> ext = External::New(geom);
-    Handle<Object> obj = constructor->GetFunction()->NewInstance(1, &ext);
+    Handle<Value> ext = External::New(isolate, geom);
+
+    Local<Function> cons = Local<Function>::New(isolate, constructor);
+    Handle<Object> obj = cons->NewInstance(1, &ext);
     geom->Wrap(obj);
-    return scope.Close(obj);
+    return obj;
 }
 
-Handle<Value> Geometry::New(const Arguments& args) {
+void Geometry::New(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry *geom;
-    HandleScope scope;
     geom = new Geometry();
     geom->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
-Handle<Value> Geometry::ToString(const Arguments& args) {
-    HandleScope scope;
+void Geometry::ToString(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
-    return scope.Close(String::New(geom->_geom->toString().data()));
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, geom->_geom->toString().data()));
 }
 
-Handle<Value> Geometry::GetGeometryType(const Arguments& args) {
-    HandleScope scope;
+void Geometry::GetGeometryType(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
-    return scope.Close(String::New(geom->_geom->getGeometryType().data()));
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, geom->_geom->getGeometryType().data()));
 }
 
-Handle<Value> Geometry::Distance(const Arguments& args) {
-    HandleScope scope;
+void Geometry::Distance(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-    return scope.Close(Number::New(geom->_geom->distance(geom2->_geom)));
+    args.GetReturnValue().Set(Number::New(isolate, geom->_geom->distance(geom2->_geom)));
 }
 
-Handle<Value> Geometry::IsWithinDistance(const Arguments& args) {
-    HandleScope scope;
+void Geometry::IsWithinDistance(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     double distance = args[0]->NumberValue();
-    return geom->_geom->isWithinDistance(geom2->_geom, distance) ? True() : False();
+    args.GetReturnValue().Set(
+      geom->_geom->isWithinDistance(geom2->_geom, distance) ? True(isolate) : False(isolate)
+    );
 }
 
-Handle<Value> Geometry::SetSRID(const Arguments& args) {
-    HandleScope scope;
+void Geometry::SetSRID(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     geom->_geom->setSRID(args[0]->IntegerValue());
-    return Undefined();
+    args.GetReturnValue().Set(Undefined(isolate));
 }
 
-Handle<Value> Geometry::ToJSON(const Arguments& args) {
-    HandleScope scope;
+void Geometry::ToJSON(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     GeoJSONWriter* writer = new GeoJSONWriter();
     if (args.Length() >= 1 && args[0]->IsInt32()) {
@@ -128,11 +153,13 @@ Handle<Value> Geometry::ToJSON(const Arguments& args) {
     }
     Handle<Value> json = writer->write(geom->_geom);
     delete writer;
-    return scope.Close(json);
+    args.GetReturnValue().Set(json);
 }
 
-Handle<Value> Geometry::Buffer(const Arguments& args) {
-    HandleScope scope;
+void Geometry::Buffer(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     double distance;
     int quadrantSegments;
     Handle<Value> result;
@@ -151,7 +178,7 @@ Handle<Value> Geometry::Buffer(const Arguments& args) {
         result = Geometry::New(geom->_geom->buffer(distance, quadrantSegments, endCapStyle));
     }
 
-    return scope.Close(result);
+    args.GetReturnValue().Set(result);
 }
 
 //GEOS unary predicates
