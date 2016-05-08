@@ -12,9 +12,9 @@ class WKBWriter : public ObjectWrap {
         WKBWriter();
         ~WKBWriter();
         static void Initialize(Handle<Object> target);
-        static Persistent<FunctionTemplate> constructor;
-        static Handle<Value> New(const Arguments& args);
-        static Handle<Value> WriteHEX(const Arguments& args);
+        static Persistent<Function> constructor;
+        static void New(const FunctionCallbackInfo<Value>& args);
+        static void WriteHEX(const FunctionCallbackInfo<Value>& args);
 
     protected:
 

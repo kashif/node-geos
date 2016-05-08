@@ -14,24 +14,26 @@ GeometryFactory::GeometryFactory(const geos::geom::PrecisionModel *pm, int newSR
 
 GeometryFactory::~GeometryFactory() {}
 
-Persistent<FunctionTemplate> GeometryFactory::constructor;
+Persistent<Function> GeometryFactory::constructor;
 
 void GeometryFactory::Initialize(Handle<Object> target) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(GeometryFactory::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("GeometryFactory"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, GeometryFactory::New);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "GeometryFactory"));
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getPrecisionModel", GetPrecisionModel);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getSRID", GetSRID);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "destroy", Destroy);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getPrecisionModel", GetPrecisionModel);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getSRID", GetSRID);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "destroy", Destroy);
 
-    target->Set(String::NewSymbol("GeometryFactory"), constructor->GetFunction());
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "GeometryFactory"), tpl->GetFunction());
 }
 
-Handle<Value> GeometryFactory::New(const Arguments& args) {
-    HandleScope scope;
+void GeometryFactory::New(const FunctionCallbackInfo<Value>& args) {
     GeometryFactory* factory;
     if (args.Length() == 0) {
         factory = new GeometryFactory();
@@ -44,25 +46,31 @@ Handle<Value> GeometryFactory::New(const Arguments& args) {
         factory = new GeometryFactory(model->_model, newSRID);
     }
     factory->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
-Handle<Value> GeometryFactory::GetSRID(const Arguments& args) {
-    HandleScope scope;
+void GeometryFactory::GetSRID(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
-    return scope.Close(Integer::New(factory->_factory->getSRID()));
+    args.GetReturnValue().Set(Integer::New(isolate, factory->_factory->getSRID()));
 }
 
-Handle<Value> GeometryFactory::GetPrecisionModel(const Arguments& args) {
-    HandleScope scope;
+void GeometryFactory::GetPrecisionModel(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
-    return scope.Close(PrecisionModel::New(factory->_factory->getPrecisionModel()));
+    args.GetReturnValue().Set(PrecisionModel::New(factory->_factory->getPrecisionModel()));
 }
 
-Handle<Value> GeometryFactory::Destroy(const Arguments& args) {
-  HandleScope scope;
+void GeometryFactory::Destroy(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+
   GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
   Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
   factory->_factory->destroyGeometry(geom->_geom);
-  return Undefined();
+  args.GetReturnValue().Set(Undefined(isolate));
 }

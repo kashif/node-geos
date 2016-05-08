@@ -18,12 +18,12 @@ class GeometryFactory : public ObjectWrap {
         ~GeometryFactory();
 
         static void Initialize(Handle<Object> target);
-        static Persistent<FunctionTemplate> constructor;
-        static Handle<Value> New(const Arguments& args);
+        static Persistent<Function> constructor;
+        static void New(const FunctionCallbackInfo<Value>& args);
 
-        static Handle<Value> GetPrecisionModel(const Arguments& args);
-        static Handle<Value> GetSRID(const Arguments& args);
-        static Handle<Value> Destroy(const Arguments& args);
+        static void GetPrecisionModel(const FunctionCallbackInfo<Value>& args);
+        static void GetSRID(const FunctionCallbackInfo<Value>& args);
+        static void Destroy(const FunctionCallbackInfo<Value>& args);
 
     protected:
 

@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-Required node version is 0.10.0 or higher. Make sure you have GEOS version 3.2.2 or higher installed together with the headers and libraries.
+Required Node version is 0.12.0 or higher. Make sure you have GEOS version 3.2.2 or higher installed together with the headers and libraries.
 
 ## Installation
 

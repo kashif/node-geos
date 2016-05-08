@@ -34,7 +34,7 @@ class GeoJSONReader : public ObjectWrap {
         const geos::geom::CoordinateSequenceFactory* coordinateSequenceFactory;
 
     private:
-        static Persistent<FunctionTemplate> constructor;
+        static Persistent<Function> constructor;
 
     public:
         GeoJSONReader();
@@ -43,7 +43,7 @@ class GeoJSONReader : public ObjectWrap {
         geos::geom::Geometry* read(Handle<Value> value);
 
         static void Initialize(Handle<Object> target);
-        static Handle<Value> New(const Arguments& args);
+        static void New(const FunctionCallbackInfo<Value>& args);
 
     protected:
         Handle<Value> getCoordsArray(Handle<Object> geojson);
@@ -60,7 +60,7 @@ class GeoJSONReader : public ObjectWrap {
         geos::geom::MultiPolygon* getMultiPolygon(Handle<Value> coords);
         geos::geom::GeometryCollection* getGeometryCollection(Handle<Array> array);
 
-        static Handle<Value> Read(const Arguments& args);
+        static void Read(const FunctionCallbackInfo<Value>& args);
         static double valueToDouble(Handle<Value> value);
 
 };

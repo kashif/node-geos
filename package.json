@@ -1,55 +1,57 @@
-{ "name": "geos"
-, "description": "GEOS (Geometry Engine) bindings for Node."
-, "author": "Kashif Rasul <kashif@nomad-labs.com>"
-, "contributors" :
-  [ { "name": "Paul Smith"
-    , "web": "http://pauladamsmith.com"
-    , "email": "paulsmith@pobox.com"
+{
+  "name": "geos",
+  "description": "GEOS (Geometry Engine) bindings for Node.",
+  "author": "Kashif Rasul <kashif@nomad-labs.com>",
+  "contributors": [
+    {
+      "name": "Paul Smith",
+      "web": "http://pauladamsmith.com",
+      "email": "paulsmith@pobox.com"
+    },
+    {
+      "name": "Kashif Rasul",
+      "email": "kashif@nomad-labs.com"
+    },
+    {
+      "name": "Rick Branson",
+      "email": "rick@diodeware.com"
+    },
+    {
+      "name": "Johan Euphrosine"
+    },
+    {
+      "name": "Philipp Borgers",
+      "email": "borgers@mi.fu-berlin.de"
+    },
+    {
+      "name": "Andreas Kalsch",
+      "web": "http://akidee.de",
+      "email": "mail@akidee.de"
     }
-  , { "name": "Kashif Rasul"
-    , "email": "kashif@nomad-labs.com"
-    }
-  , { "name": "Rick Branson"
-    , "email": "rick@diodeware.com"
-    }
-  , { "name": "Johan Euphrosine"
-    }
-  , { "name": "Philipp Borgers"
-    , "email": "borgers@mi.fu-berlin.de"
-    }
-  , { "name": "Andreas Kalsch"
-    , "web": "http://akidee.de"
-    , "email": "mail@akidee.de"
-    }
-  ]
-, "version": "0.0.4"
-, "licenses": [
-  { "type": "MIT"
-  , "url": "https://github.com/kashif/node-geos/blob/master/LICENSE"
-  }]
-, "repository":
-  { "type": "git"
-  , "url": "https://github.com/kashif/node-geos.git"
-  }
-, "bugs":
-  { "url": "http://github.com/kashif/node-geos/issues"
-  }
-, "scripts":
-  {
-    "install" : "./node_modules/coffee-script/bin/cake install"
-  , "test": "vows --spec"
-  }
-, "main": "./lib"
-, "dependencies":
-  {
+  ],
+  "version": "0.0.4",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kashif/node-geos.git"
+  },
+  "bugs": {
+    "url": "http://github.com/kashif/node-geos/issues"
+  },
+  "scripts": {
+    "install": "./node_modules/coffee-script/bin/cake install",
+    "test": "vows --spec"
+  },
+  "gypfile": true,
+  "main": "./lib",
+  "dependencies": {
     "coffee-script": "*",
     "node-gyp": ">=0.12.1"
-  }
-, "devDependencies":
-  {
+  },
+  "devDependencies": {
     "vows": ">=0.7.0"
-  }
-, "engines":
-  { "node": ">=0.10.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
   }
 }
