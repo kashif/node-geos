@@ -19,7 +19,6 @@ void Geometry::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "Geometry"));
 
-
     NODE_SET_PROTOTYPE_METHOD(tpl, "toString", Geometry::ToString);
     //GEOS unary predicates
     NODE_SET_PROTOTYPE_METHOD(tpl, "isSimple", Geometry::IsSimple);

@@ -41,8 +41,8 @@
                                                                                         \
         delete closure;                                                                 \
         delete req;                                                                     \
-                                                                                        \
     }                                                                                   \
+                                                                                        \
     void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args)                   \
     {                                                                                   \
         Isolate* isolate = Isolate::GetCurrent();                                       \
@@ -60,10 +60,14 @@
             args.GetReturnValue().Set(Undefined(isolate));                              \
         } else {                                                                        \
             try {                                                                       \
-                args.GetReturnValue().Set(geom->_geom->geosmethod() ? True(isolate) : False(isolate));      \
-                return; \
+                args.GetReturnValue().Set(                                              \
+                  geom->_geom->geosmethod() ? True(isolate) : False(isolate)            \
+                );                                                                      \
+                return;                                                                 \
             } catch(geos::util::GEOSException exception) {                              \
-                isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, exception.what()))); \
+                isolate->ThrowException(                                                \
+                  Exception::Error(String::NewFromUtf8(isolate, exception.what()))      \
+                );                                                                      \
             }                                                                           \
             args.GetReturnValue().Set(Undefined(isolate));                              \
         }                                                                               \
@@ -89,7 +93,9 @@
                                                                                         \
         assert(status == 0);                                                            \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
-        Local<Value> argv[2] = { Null(isolate), closure->result ? True(isolate) : False(isolate) }; \
+        Local<Value> argv[2] = {                                                        \
+            Null(isolate), closure->result ? True(isolate) : False(isolate)             \
+        };                                                                              \
         TryCatch tryCatch;                                                              \
         Local<Function> local_callback = Local<Function>::New(isolate, closure->cb);    \
         local_callback->Call(isolate->GetCurrentContext()->Global(), 2, argv);          \
@@ -104,8 +110,8 @@
                                                                                         \
         delete closure;                                                                 \
         delete req;                                                                     \
-                                                                                        \
     }                                                                                   \
+                                                                                        \
     void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args)                   \
     {                                                                                   \
         Isolate* isolate = Isolate::GetCurrent();                                       \
@@ -117,7 +123,7 @@
             geosmethod##_baton_t *closure = new geosmethod##_baton_t();                 \
             closure->geom = geom;                                                       \
             closure->geom2 = geom2;                                                     \
-            closure->cb.Reset(isolate, Persistent<Function>(isolate, f));                             \
+            closure->cb.Reset(isolate, Persistent<Function>(isolate, f));               \
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
             uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
@@ -127,8 +133,9 @@
         } else {                                                                        \
             try {                                                                       \
                 args.GetReturnValue().Set(                                              \
-                  geom->_geom->geosmethod(geom2->_geom) ? True(isolate) : False(isolate));            \
-                return; \
+                  geom->_geom->geosmethod(geom2->_geom) ? True(isolate) : False(isolate)\
+                );                                                                      \
+                return;                                                                 \
             } catch(geos::util::GEOSException exception) {                              \
                 isolate->ThrowException(                                                \
                   Exception::Error(String::NewFromUtf8(isolate, exception.what()))      \
