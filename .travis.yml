@@ -1,4 +1,6 @@
 language: node_js
+sudo: required
+dist: trusty
 
 node_js:
   - '0.10'
@@ -7,6 +9,9 @@ node_js:
   - '5.10'
   - '6.0'
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libgeos-dev
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
