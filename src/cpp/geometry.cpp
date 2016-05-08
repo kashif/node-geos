@@ -143,15 +143,14 @@ void Geometry::ToJSON(const FunctionCallbackInfo<Value>& args) {
     HandleScope scope(isolate);
 
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
-    GeoJSONWriter* writer = new GeoJSONWriter();
+    GeoJSONWriter writer;
     if (args.Length() >= 1 && args[0]->IsInt32()) {
-        writer->setRoundingPrecision(args[0]->Int32Value());
+        writer.setRoundingPrecision(args[0]->Int32Value());
     }
     if (args.Length() >= 2 && args[1]->IsBoolean()) {
-        writer->setBbox(args[1]->BooleanValue());
+        writer.setBbox(args[1]->BooleanValue());
     }
-    Handle<Value> json = writer->write(geom->_geom);
-    delete writer;
+    Handle<Value> json = writer.write(geom->_geom);
     args.GetReturnValue().Set(json);
 }
 
