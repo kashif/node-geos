@@ -17,40 +17,45 @@ PrecisionModel::PrecisionModel(const geos::geom::PrecisionModel *model) {
 
 PrecisionModel::~PrecisionModel() {}
 
-Persistent<FunctionTemplate> PrecisionModel::constructor;
+Persistent<Function> PrecisionModel::constructor;
 
 void PrecisionModel::Initialize(Handle<Object> target) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(PrecisionModel::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("PrecisionModel"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, PrecisionModel::New);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "PrecisionModel"));
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getType", GetType);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getScale", GetScale);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getOffsetX", GetOffsetX);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "getOffsetY", GetOffsetY);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getType", GetType);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getScale", GetScale);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getOffsetX", GetOffsetX);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getOffsetY", GetOffsetY);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "toString", ToString);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "toString", ToString);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "isFloating", IsFloating);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "isFloating", IsFloating);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "compareTo", CompareTo);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "compareTo", CompareTo);
 
-    target->Set(String::NewSymbol("PrecisionModel"), constructor->GetFunction());
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "PrecisionModel"), tpl->GetFunction());
 }
 
-Handle<Value> PrecisionModel::New(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::New(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model;
     if (args.Length() == 0) {
         model = new PrecisionModel();
     } else {
         if (args[0]->IsString()) {
             //type
-            if(args[0]->ToString()->Equals(String::New("FIXED"))) {
+            if(args[0]->ToString()->Equals(String::NewFromUtf8(isolate, "FIXED"))) {
                 model = new PrecisionModel(geos::geom::PrecisionModel::FIXED);
-            } else if (args[0]->ToString()->Equals(String::New("FLOATING"))) {
+            } else if (args[0]->ToString()->Equals(String::NewFromUtf8(isolate, "FLOATING"))) {
                 model = new PrecisionModel(geos::geom::PrecisionModel::FLOATING);
             } else {
                 model = new PrecisionModel(geos::geom::PrecisionModel::FLOATING_SINGLE);
@@ -61,57 +66,74 @@ Handle<Value> PrecisionModel::New(const Arguments& args) {
         }
     }
     model->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
 Handle<Value> PrecisionModel::New(const geos::geom::PrecisionModel *m) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = new PrecisionModel(m);
-    Handle<Value> ext = External::New(model);
-    Handle<Object> obj = constructor->GetFunction()->NewInstance(1, &ext);
+    Handle<Value> ext = External::New(isolate, model);
+    Local<Function> cons = Local<Function>::New(isolate, constructor);
+    Handle<Object> obj = cons->NewInstance(1, &ext);
     model->Wrap(obj);
-    return scope.Close(obj);
+    return obj;
 }
 
-Handle<Value> PrecisionModel::GetType(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::GetType(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
-    return scope.Close(Integer::New(model->_model->getType()));
+    args.GetReturnValue().Set(Integer::New(isolate, model->_model->getType()));
 }
 //TODO add a macro for this?
-Handle<Value> PrecisionModel::GetScale(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::GetScale(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
-    return scope.Close(Number::New(model->_model->getScale()));
+    args.GetReturnValue().Set(Number::New(isolate, model->_model->getScale()));
 }
 
-Handle<Value> PrecisionModel::GetOffsetX(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::GetOffsetX(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
-    return scope.Close(Number::New(model->_model->getOffsetX()));
+    args.GetReturnValue().Set(Number::New(isolate, model->_model->getOffsetX()));
 }
 
-Handle<Value> PrecisionModel::GetOffsetY(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::GetOffsetY(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
-    return scope.Close(Number::New(model->_model->getOffsetY()));
+    args.GetReturnValue().Set(Number::New(isolate, model->_model->getOffsetY()));
 }
 
-Handle<Value> PrecisionModel::ToString(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::ToString(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
-    return scope.Close(String::New(model->_model->toString().data()));
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, model->_model->toString().data()));
 }
 
-Handle<Value> PrecisionModel::IsFloating(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::IsFloating(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
-    return model->_model->isFloating() ? True() : False();
+    args.GetReturnValue().Set(model->_model->isFloating() ? True(isolate) : False(isolate));
 }
 
-Handle<Value> PrecisionModel::CompareTo(const Arguments& args) {
-    HandleScope scope;
+void PrecisionModel::CompareTo(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     PrecisionModel *model = ObjectWrap::Unwrap<PrecisionModel>(args.This());
     PrecisionModel *model2 = ObjectWrap::Unwrap<PrecisionModel>(args[0]->ToObject());
-    return scope.Close(Integer::New(model->_model->compareTo(model2->_model)));
+    args.GetReturnValue().Set(Integer::New(isolate, model->_model->compareTo(model2->_model)));
 }

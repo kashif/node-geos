@@ -11,13 +11,13 @@ class WKTWriter : public ObjectWrap {
         WKTWriter();
         ~WKTWriter();
         static void Initialize(Handle<Object> target);
-        static Persistent<FunctionTemplate> constructor;
-        static Handle<Value> New(const Arguments& args);
-        static Handle<Value> Write(const Arguments& args);
+        static Persistent<Function> constructor;
+        static void New(const FunctionCallbackInfo<Value>& args);
+        static void Write(const FunctionCallbackInfo<Value>& args);
 
     protected:
-        static Handle<Value> SetRoundingPrecision(const Arguments& args);
-        static Handle<Value> SetTrim(const Arguments& args);
+        static void SetRoundingPrecision(const FunctionCallbackInfo<Value>& args);
+        static void SetTrim(const FunctionCallbackInfo<Value>& args);
 
     private:
         geos::io::WKTWriter* _writer;

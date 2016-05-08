@@ -32,7 +32,7 @@ class GeoJSONWriter : public ObjectWrap {
         bool bbox;
 
     private:
-        static Persistent<FunctionTemplate> constructor;
+        static Persistent<Function> constructor;
 
     public:
         GeoJSONWriter();
@@ -43,7 +43,7 @@ class GeoJSONWriter : public ObjectWrap {
         Handle<Value> writeBbox(const geos::geom::Geometry* geom);
 
         static void Initialize(Handle<Object> target);
-        static Handle<Value> New(const Arguments& args);
+        static void New(const FunctionCallbackInfo<Value>& args);
 
     protected:
         double roundNumber(double coord);
@@ -53,10 +53,10 @@ class GeoJSONWriter : public ObjectWrap {
         Handle<Array> geometryCollectionToArrayOfObjects(const geos::geom::GeometryCollection* geom);
         Handle<Value> getCoordsOrGeom(const geos::geom::Geometry* geom);
 
-        static Handle<Value> SetRoundingPrecision(const Arguments& args);
-        static Handle<Value> SetBbox(const Arguments& args);
-        static Handle<Value> Write(const Arguments& args);
-        static Handle<Value> WriteBbox(const Arguments& args);
+        static void SetRoundingPrecision(const FunctionCallbackInfo<Value>& args);
+        static void SetBbox(const FunctionCallbackInfo<Value>& args);
+        static void Write(const FunctionCallbackInfo<Value>& args);
+        static void WriteBbox(const FunctionCallbackInfo<Value>& args);
 
 };
 

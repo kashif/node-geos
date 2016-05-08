@@ -1,6 +1,6 @@
 #include "geojsonreader.hpp"
 
-Persistent<FunctionTemplate> GeoJSONReader::constructor;
+Persistent<Function> GeoJSONReader::constructor;
 
 GeoJSONReader::GeoJSONReader()
         :
@@ -19,19 +19,25 @@ GeoJSONReader::GeoJSONReader(const geos::geom::GeometryFactory *gf)
 GeoJSONReader::~GeoJSONReader() {}
 
 void GeoJSONReader::Initialize(Handle<Object> target) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(GeoJSONReader::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("GeoJSONReader"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, GeoJSONReader::New);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "read", GeoJSONReader::Read);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "GeoJSONReader"));
 
-    target->Set(String::NewSymbol("GeoJSONReader"), constructor->GetFunction());
+    NODE_SET_PROTOTYPE_METHOD(tpl, "read", GeoJSONReader::Read);
+
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "GeoJSONReader"), tpl->GetFunction());
 }
 
-Handle<Value> GeoJSONReader::New(const Arguments& args) {
-    HandleScope scope;
+void GeoJSONReader::New(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     GeoJSONReader* reader;
 
     if(args.Length() == 1) {
@@ -42,20 +48,22 @@ Handle<Value> GeoJSONReader::New(const Arguments& args) {
     }
 
     reader->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
-Handle<Value> GeoJSONReader::Read(const Arguments& args) {
+void GeoJSONReader::Read(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+
     GeoJSONReader* reader = ObjectWrap::Unwrap<GeoJSONReader>(args.This());
     try {
         geos::geom::Geometry* g = reader->read(args[0]);
-        return Geometry::New(g);
+        args.GetReturnValue().Set(Geometry::New(g));
     }
     catch (const char* e) {
-        return ThrowException(Exception::Error(String::New(e)));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, e)));
     }
     catch (geos::util::GEOSException e) {
-        return ThrowException(Exception::Error(String::New(e.what())));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, e.what())));
     }
 }
 
@@ -149,8 +157,9 @@ geos::geom::LinearRing* GeoJSONReader::getLinearRing(Handle<Value> value) {
 }
 
 Handle<Value> GeoJSONReader::getCoordsArray(Handle<Object> geojson) {
+    Isolate* isolate = Isolate::GetCurrent();
 
-    Handle<String> coordsKey = String::New("coordinates");
+    Handle<String> coordsKey = String::NewFromUtf8(isolate, "coordinates");
     if (!geojson->HasOwnProperty(coordsKey))
         throw "Property \"coordinates\" is missing";
 
@@ -168,8 +177,9 @@ Handle<Value> GeoJSONReader::getCoordsArray(Handle<Object> geojson) {
 }
 
 Handle<Array> GeoJSONReader::getGeomsArray(Handle<Object> geojson) {
+    Isolate* isolate = Isolate::GetCurrent();
 
-    Handle<String> geomsKey = String::New("geometries");
+    Handle<String> geomsKey = String::NewFromUtf8(isolate, "geometries");
     if (!geojson->HasOwnProperty(geomsKey))
         throw "Property \"geometries\" is missing";
 
@@ -190,11 +200,13 @@ geos::geom::Geometry* GeoJSONReader::read(Handle<Value> value) {
         throw "GeoJSON must be an instance of Object";
     }
 
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
 
     Handle<Object> obj = Handle<Object>::Cast(value);
 
-    Handle<String> typeKey = String::New("type");
+    Handle<String> typeKey = String::NewFromUtf8(isolate, "type");
 
     if (!obj->HasOwnProperty(typeKey)) {
         throw "Property \"type\" is missing";

@@ -1,28 +1,34 @@
 #include "geojsonwriter.hpp"
 
-Persistent<FunctionTemplate> GeoJSONWriter::constructor;
+Persistent<Function> GeoJSONWriter::constructor;
 
 void GeoJSONWriter::Initialize(Handle<Object> target) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(GeoJSONWriter::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("GeoJSONWriter"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, GeoJSONWriter::New);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "write", GeoJSONWriter::Write);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "writeBbox", GeoJSONWriter::WriteBbox);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "setRoundingPrecision", GeoJSONWriter::SetRoundingPrecision);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "setBbox", GeoJSONWriter::SetBbox);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "GeoJSONWriter"));
 
-    target->Set(String::NewSymbol("GeoJSONWriter"), constructor->GetFunction());
+    NODE_SET_PROTOTYPE_METHOD(tpl, "write", GeoJSONWriter::Write);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "writeBbox", GeoJSONWriter::WriteBbox);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setRoundingPrecision", GeoJSONWriter::SetRoundingPrecision);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setBbox", GeoJSONWriter::SetBbox);
+
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "GeoJSONWriter"), tpl->GetFunction());
 }
 
-Handle<Value> GeoJSONWriter::New(const Arguments& args) {
+void GeoJSONWriter::New(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     GeoJSONWriter* writer;
-    HandleScope scope;
     writer = new GeoJSONWriter();
     writer->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
 double GeoJSONWriter::roundNumber(double coord) {
@@ -34,51 +40,51 @@ double GeoJSONWriter::roundNumber(double coord) {
 }
 
 Handle<Array> GeoJSONWriter::coordinateToArray(const geos::geom::Coordinate* coord) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
 
-    Handle<Array> array = Array::New();
-    array->Set(0, Number::New(roundNumber(coord->x)));
-    array->Set(1, Number::New(roundNumber(coord->y)));
+    Handle<Array> array = Array::New(isolate);
+    array->Set(0, Number::New(isolate, roundNumber(coord->x)));
+    array->Set(1, Number::New(isolate, roundNumber(coord->y)));
     if (coord->z == coord->z)
-        array->Set(2, Number::New(roundNumber(coord->z)));
+        array->Set(2, Number::New(isolate, roundNumber(coord->z)));
 
-    return scope.Close(array);
+    return array;
 }
 
 Handle<Array> GeoJSONWriter::coordinateSequenceToArray(const geos::geom::CoordinateSequence* seq) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
 
     int size = seq->getSize();
-    Handle<Array> array = Array::New(size);
+    Handle<Array> array = Array::New(isolate, size);
     for (int i = 0; i < size; i++) {
         array->Set(i, coordinateToArray(&seq->getAt(i)));
     }
 
-    return scope.Close(array);
+    return array;
 }
 
 Handle<Array> GeoJSONWriter::geometryCollectionToArrayOfArrays(const geos::geom::GeometryCollection* geom) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
 
     int size = geom->getNumGeometries();
-    Handle<Array> array = Array::New(size);
+    Handle<Array> array = Array::New(isolate, size);
     for (int i = 0; i < size; i++) {
         array->Set(i, getCoordsOrGeom(geom->getGeometryN(i)));
     }
 
-    return scope.Close(array);
+    return array;
 }
 
 Handle<Array> GeoJSONWriter::geometryCollectionToArrayOfObjects(const geos::geom::GeometryCollection* geom) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
 
     int size = geom->getNumGeometries();
-    Handle<Array> array = Array::New(size);
+    Handle<Array> array = Array::New(isolate, size);
     for (int i = 0; i < size; i++) {
         array->Set(i, write(geom->getGeometryN(i)));
     }
 
-    return scope.Close(array);
+    return array;
 }
 
 Handle<Value> GeoJSONWriter::getCoordsOrGeom(const geos::geom::Geometry* geom) {
@@ -97,11 +103,11 @@ Handle<Value> GeoJSONWriter::getCoordsOrGeom(const geos::geom::Geometry* geom) {
     if (typeId == geos::geom::GEOS_POLYGON) {
         const geos::geom::Polygon* g = dynamic_cast< const geos::geom::Polygon* >(geom);
 
-        HandleScope scope;
+        Isolate* isolate = Isolate::GetCurrent();
 
         int rings = g->getNumInteriorRing() + 1;
 
-        Handle<Array> array = Array::New(rings);
+        Handle<Array> array = Array::New(isolate, rings);
 
         const geos::geom::CoordinateSequence* seq = g->getExteriorRing()->getCoordinatesRO();
         array->Set(0, coordinateSequenceToArray(seq));
@@ -112,7 +118,7 @@ Handle<Value> GeoJSONWriter::getCoordsOrGeom(const geos::geom::Geometry* geom) {
             array->Set(i + 1, coordinateSequenceToArray(seq));
         }
 
-        return scope.Close(array);
+        return array;
     }
 
     if (typeId == geos::geom::GEOS_MULTIPOINT) {
@@ -135,27 +141,29 @@ Handle<Value> GeoJSONWriter::getCoordsOrGeom(const geos::geom::Geometry* geom) {
         return geometryCollectionToArrayOfObjects(g);
     }
 
-    HandleScope scope;
-    return scope.Close(Null());
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
+    return Null(isolate);
 }
 
 Handle<Value> GeoJSONWriter::writeBbox(const geos::geom::Geometry* geom) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
 
     if (geom->isEmpty()) {
-        return scope.Close(Null());
+        return Null(isolate);
     }
 
 
     const geos::geom::Envelope* envelope = geom->getEnvelopeInternal();
 
-    Handle<Array> bbox = Array::New(4);
-    bbox->Set(0, Number::New(roundNumber(envelope->getMinX())));
-    bbox->Set(1, Number::New(roundNumber(envelope->getMinY())));
-    bbox->Set(2, Number::New(roundNumber(envelope->getMaxX())));
-    bbox->Set(3, Number::New(roundNumber(envelope->getMaxY())));
+    Handle<Array> bbox = Array::New(isolate, 4);
+    bbox->Set(0, Number::New(isolate, roundNumber(envelope->getMinX())));
+    bbox->Set(1, Number::New(isolate, roundNumber(envelope->getMinY())));
+    bbox->Set(2, Number::New(isolate, roundNumber(envelope->getMaxX())));
+    bbox->Set(3, Number::New(isolate, roundNumber(envelope->getMaxY())));
 
-    return scope.Close(bbox);
+    return bbox;
 }
 
 GeoJSONWriter::GeoJSONWriter() {
@@ -165,16 +173,20 @@ GeoJSONWriter::GeoJSONWriter() {
 
 GeoJSONWriter::~GeoJSONWriter() {}
 
-Handle<Value> GeoJSONWriter::SetRoundingPrecision(const Arguments& args) {
+void GeoJSONWriter::SetRoundingPrecision(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+
     GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
     writer->setRoundingPrecision(args[0]->Int32Value());
-    return Undefined();
+    args.GetReturnValue().Set(Undefined(isolate));
 }
 
-Handle<Value> GeoJSONWriter::SetBbox(const Arguments& args) {
+void GeoJSONWriter::SetBbox(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+
     GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
     writer->setBbox(args[0]->BooleanValue());
-    return Undefined();
+    args.GetReturnValue().Set(Undefined(isolate));
 }
 
 void GeoJSONWriter::setRoundingPrecision(int places) {
@@ -189,26 +201,26 @@ void GeoJSONWriter::setBbox(bool _bbox) {
     bbox = _bbox;
 }
 
-Handle<Value> GeoJSONWriter::Write(const Arguments& args) {
+void GeoJSONWriter::Write(const FunctionCallbackInfo<Value>& args) {
     GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
-    return writer->write(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom);
+    args.GetReturnValue().Set(writer->write(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom));
 }
 
-Handle<Value> GeoJSONWriter::WriteBbox(const Arguments& args) {
+void GeoJSONWriter::WriteBbox(const FunctionCallbackInfo<Value>& args) {
     GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
-    return writer->writeBbox(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom);
+    args.GetReturnValue().Set(writer->writeBbox(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom));
 }
 
 Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
 
-    Handle<Object> object = Object::New();
+    Handle<Object> object = Object::New(isolate);
 
     int typeId = geom->getGeometryTypeId();
 
     object->Set(
-        String::New("type"),
-        String::New(
+        String::NewFromUtf8(isolate, "type"),
+        String::NewFromUtf8(isolate,
             typeId == geos::geom::GEOS_LINESTRING || typeId == geos::geom::GEOS_LINEARRING
                 ? "LineString"
                 : geom->getGeometryType().data()
@@ -217,23 +229,23 @@ Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
 
     if (geom->isEmpty()) {
         if (typeId != geos::geom::GEOS_GEOMETRYCOLLECTION) {
-            object->Set(String::New("coordinates"), Null());
+            object->Set(String::NewFromUtf8(isolate, "coordinates"), Null(isolate));
         } else {
-            object->Set(String::New("geometries"), Array::New());
+            object->Set(String::NewFromUtf8(isolate, "geometries"), Array::New(isolate));
         }
     } else {
         Handle<Value> coordsOrGeom = getCoordsOrGeom(geom);
 
         if (typeId != geos::geom::GEOS_GEOMETRYCOLLECTION) {
-            object->Set(String::New("coordinates"), coordsOrGeom);
+            object->Set(String::NewFromUtf8(isolate, "coordinates"), coordsOrGeom);
         } else {
-            object->Set(String::New("geometries"), coordsOrGeom);
+            object->Set(String::NewFromUtf8(isolate, "geometries"), coordsOrGeom);
         }
     }
 
     if (bbox) {
-        object->Set(String::New("bbox"), writeBbox(geom));
+        object->Set(String::NewFromUtf8(isolate, "bbox"), writeBbox(geom));
     }
 
-    return scope.Close(object);
+    return object;
 }

@@ -42,6 +42,7 @@
     "install": "./node_modules/coffee-script/bin/cake install",
     "test": "vows --spec"
   },
+  "gypfile": true,
   "main": "./lib",
   "dependencies": {
     "coffee-script": "*",

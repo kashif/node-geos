@@ -6,46 +6,60 @@ WKTWriter::WKTWriter() {
 
 WKTWriter::~WKTWriter() {}
 
-Persistent<FunctionTemplate> WKTWriter::constructor;
+Persistent<Function> WKTWriter::constructor;
 
 void WKTWriter::Initialize(Handle<Object> target) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(WKTWriter::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("WKTWriter"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, WKTWriter::New);
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "write", WKTWriter::Write);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "setRoundingPrecision", WKTWriter::SetRoundingPrecision);
-    NODE_SET_PROTOTYPE_METHOD(constructor, "setTrim", WKTWriter::SetTrim);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "WKTWriter"));
 
-    target->Set(String::NewSymbol("WKTWriter"), constructor->GetFunction());
+    NODE_SET_PROTOTYPE_METHOD(tpl, "write", WKTWriter::Write);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setRoundingPrecision", WKTWriter::SetRoundingPrecision);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setTrim", WKTWriter::SetTrim);
+
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "WKTWriter"), tpl->GetFunction());
 }
 
-Handle<Value> WKTWriter::New(const Arguments& args) {
-    HandleScope scope;
+void WKTWriter::New(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKTWriter* writer = new WKTWriter();
     writer->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
-Handle<Value> WKTWriter::Write(const Arguments& args) {
-    HandleScope scope;
+void WKTWriter::Write(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKTWriter *writer = ObjectWrap::Unwrap<WKTWriter>(args.This());
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     //TODO catch exception?
     std::string str = writer->_writer->write(geom->_geom);
-    return scope.Close(String::New(str.data()));
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, str.data()));
 }
 
-Handle<Value> WKTWriter::SetRoundingPrecision(const Arguments& args) {
+void WKTWriter::SetRoundingPrecision(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKTWriter *writer = ObjectWrap::Unwrap<WKTWriter>(args.This());
     writer->_writer->setRoundingPrecision(args[0]->Int32Value());
-    return Undefined();
+    args.GetReturnValue().Set(Undefined(isolate));
 }
 
-Handle<Value> WKTWriter::SetTrim(const Arguments& args) {
+void WKTWriter::SetTrim(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKTWriter *writer = ObjectWrap::Unwrap<WKTWriter>(args.This());
     writer->_writer->setTrim(args[0]->BooleanValue());
-    return Undefined();
+    args.GetReturnValue().Set(Undefined(isolate));
 }

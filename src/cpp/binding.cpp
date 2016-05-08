@@ -11,10 +11,11 @@
 
 extern "C" {
     void init (Handle<Object> target) {
-        HandleScope scope;
+        Isolate* isolate = Isolate::GetCurrent();
+        HandleScope scope(isolate);
 
-        target->Set(String::NewSymbol("geosversion"), String::NewSymbol(geos::geom::geosversion().data()));
-        target->Set(String::NewSymbol("jtsport"), String::NewSymbol(geos::geom::jtsport().data()));
+        target->Set(String::NewFromUtf8(isolate, "geosversion"), String::NewFromUtf8(isolate, geos::geom::geosversion().data()));
+        target->Set(String::NewFromUtf8(isolate, "jtsport"), String::NewFromUtf8(isolate, geos::geom::jtsport().data()));
 
         Geometry::Initialize(target);
         WKTReader::Initialize(target);

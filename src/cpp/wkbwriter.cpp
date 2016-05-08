@@ -6,33 +6,40 @@ WKBWriter::WKBWriter() {
 
 WKBWriter::~WKBWriter() {}
 
-Persistent<FunctionTemplate> WKBWriter::constructor;
+Persistent<Function> WKBWriter::constructor;
 
 void WKBWriter::Initialize(Handle<Object> target) {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(WKBWriter::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("WKBWriter"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, WKBWriter::New);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "WKBWriter"));
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "writeHEX", WKBWriter::WriteHEX);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "writeHEX", WKBWriter::WriteHEX);
 
-    target->Set(String::NewSymbol("WKBWriter"), constructor->GetFunction());
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "WKBWriter"), tpl->GetFunction());
 }
 
-Handle<Value> WKBWriter::New(const Arguments& args) {
-    HandleScope scope;
+void WKBWriter::New(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKBWriter* writer = new WKBWriter();
     writer->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
-Handle<Value> WKBWriter::WriteHEX(const Arguments& args) {
-    HandleScope scope;
+void WKBWriter::WriteHEX(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+
     WKBWriter *writer = ObjectWrap::Unwrap<WKBWriter>(args.This());
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     //TODO catch exception?
     std::stringstream ss;
     writer->_writer->writeHEX(*geom->_geom, ss);
-    return scope.Close(String::New(ss.str().c_str()));
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, ss.str().c_str()));
 }

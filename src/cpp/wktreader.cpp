@@ -10,24 +10,29 @@ WKTReader::WKTReader(const geos::geom::GeometryFactory *gf) {
 
 WKTReader::~WKTReader() {}
 
-Persistent<FunctionTemplate> WKTReader::constructor;
+Persistent<Function> WKTReader::constructor;
 
 void WKTReader::Initialize(Handle<Object> target)
 {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
 
-    constructor = Persistent<FunctionTemplate>::New(FunctionTemplate::New(WKTReader::New));
-    constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    constructor->SetClassName(String::NewSymbol("WKTReader"));
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, WKTReader::New);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(String::NewFromUtf8(isolate, "WKTReader"));
 
-    NODE_SET_PROTOTYPE_METHOD(constructor, "read", WKTReader::Read);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "read", WKTReader::Read);
 
-    target->Set(String::NewSymbol("WKTReader"), constructor->GetFunction());
+    constructor.Reset(isolate, tpl->GetFunction());
+
+    target->Set(String::NewFromUtf8(isolate, "WKTReader"), tpl->GetFunction());
 }
 
-Handle<Value> WKTReader::New(const Arguments& args)
+void WKTReader::New(const FunctionCallbackInfo<Value>& args)
 {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);;
+
     WKTReader *wktReader;
 
     if(args.Length() == 1) {
@@ -38,21 +43,23 @@ Handle<Value> WKTReader::New(const Arguments& args)
     }
 
     wktReader->Wrap(args.This());
-    return args.This();
+    args.GetReturnValue().Set(args.This());
 }
 
-Handle<Value> WKTReader::Read(const Arguments& args)
+void WKTReader::Read(const FunctionCallbackInfo<Value>& args)
 {
-    HandleScope scope;
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);;
+
     WKTReader* reader = ObjectWrap::Unwrap<WKTReader>(args.This());
     try {
         geos::geom::Geometry* geom = reader->_reader->read(*String::Utf8Value(args[0]->ToString()));
-        return scope.Close(Geometry::New(geom));
+        args.GetReturnValue().Set(Geometry::New(geom));
     } catch (geos::io::ParseException e) {
-        return ThrowException(Exception::Error(String::New(e.what())));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, e.what())));
     } catch (geos::util::GEOSException e) {
-        return ThrowException(Exception::Error(String::New(e.what())));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, e.what())));
     } catch (...) {
-        return ThrowException(Exception::Error(String::New("Exception while reading WKT.")));
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Exception while reading WKT.")));
     }
 }

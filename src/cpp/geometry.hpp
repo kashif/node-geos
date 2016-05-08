@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
+#include <uv.h>
 #include <geos/geom/Geometry.h>
 #include <geos/util/GEOSException.h>
 #include "binding.hpp"
@@ -19,45 +20,56 @@
     }                                                                                   \
                                                                                         \
     void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
+        Isolate* isolate = Isolate::GetCurrent();                                       \
+        HandleScope scope(isolate);                                                     \
+                                                                                        \
         assert(status == 0);                                                            \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
-        Local<Value> argv[2] = { Local<Value>::New(Null()), Local<Value>::New(closure->result ? True() : False()) }; \
+        Local<Value> argv[2] = { Null(isolate),                                         \
+            closure->result ? True(isolate) : False(isolate)                            \
+        };                                                                              \
         TryCatch tryCatch;                                                              \
-        closure->cb->Call(Context::GetCurrent()->Global(), 2, argv);                    \
+        Local<Function> local_callback = Local<Function>::New(isolate, closure->cb);    \
+        local_callback->Call(isolate->GetCurrentContext()->Global(), 2, argv);          \
                                                                                         \
         if(tryCatch.HasCaught()) {                                                      \
-            FatalException(tryCatch);                                                   \
+            FatalException(isolate, tryCatch);                                          \
         }                                                                               \
                                                                                         \
-        closure->cb.Dispose();                                                          \
+        closure->cb.Reset();                                                            \
         closure->geom->Unref();                                                         \
-        uv_unref((uv_handle_t*) req);                                                   \
                                                                                         \
         delete closure;                                                                 \
         delete req;                                                                     \
-                                                                                        \
     }                                                                                   \
-    Handle<Value> Geometry::cppmethod(const Arguments& args)                            \
+                                                                                        \
+    void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args)                   \
     {                                                                                   \
-        HandleScope scope;                                                              \
+        Isolate* isolate = Isolate::GetCurrent();                                       \
+        HandleScope scope(isolate);                                                     \
+                                                                                        \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());                     \
         if (args.Length() == 1) {                                                       \
             geosmethod##_baton_t *closure = new geosmethod##_baton_t();                 \
             closure->geom = geom;                                                       \
-            closure->cb = Persistent<Function>::New(Handle<Function>::Cast(args[0]));   \
+            closure->cb.Reset(isolate, Local<Function>::Cast(args[0]));                 \
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
             uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
-            uv_ref((uv_handle_t*) &req);                                                \
             geom->Ref();                                                                \
-            return Undefined();                                                         \
+            args.GetReturnValue().Set(Undefined(isolate));                              \
         } else {                                                                        \
             try {                                                                       \
-                return geom->_geom->geosmethod() ? True() : False();                    \
+                args.GetReturnValue().Set(                                              \
+                  geom->_geom->geosmethod() ? True(isolate) : False(isolate)            \
+                );                                                                      \
+                return;                                                                 \
             } catch(geos::util::GEOSException exception) {                              \
-                return ThrowException(Exception::Error(String::New(exception.what()))); \
+                isolate->ThrowException(                                                \
+                  Exception::Error(String::NewFromUtf8(isolate, exception.what()))      \
+                );                                                                      \
             }                                                                           \
-            return Undefined();                                                         \
+            args.GetReturnValue().Set(Undefined(isolate));                              \
         }                                                                               \
     }
 
@@ -76,79 +88,87 @@
     }                                                                                   \
                                                                                         \
     void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
+        Isolate* isolate = Isolate::GetCurrent();                                       \
+        HandleScope scope(isolate);                                                     \
+                                                                                        \
         assert(status == 0);                                                            \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
-        Local<Value> argv[2] = { Local<Value>::New(Null()), Local<Value>::New(closure->result ? True() : False()) }; \
+        Local<Value> argv[2] = {                                                        \
+            Null(isolate), closure->result ? True(isolate) : False(isolate)             \
+        };                                                                              \
         TryCatch tryCatch;                                                              \
-        closure->cb->Call(Context::GetCurrent()->Global(), 2, argv);                    \
+        Local<Function> local_callback = Local<Function>::New(isolate, closure->cb);    \
+        local_callback->Call(isolate->GetCurrentContext()->Global(), 2, argv);          \
                                                                                         \
         if(tryCatch.HasCaught()) {                                                      \
-            FatalException(tryCatch);                                                   \
+            FatalException(isolate, tryCatch);                                          \
         }                                                                               \
                                                                                         \
-        closure->cb.Dispose();                                                          \
+        closure->cb.Reset();                                                            \
         closure->geom->Unref();                                                         \
         closure->geom2->_unref();                                                       \
-        uv_unref((uv_handle_t*) &req);                                                  \
                                                                                         \
         delete closure;                                                                 \
         delete req;                                                                     \
-                                                                                        \
     }                                                                                   \
-    Handle<Value> Geometry::cppmethod(const Arguments& args)                            \
+                                                                                        \
+    void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args)                   \
     {                                                                                   \
-        HandleScope scope;                                                              \
+        Isolate* isolate = Isolate::GetCurrent();                                       \
+        HandleScope scope(isolate);                                                     \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());                     \
         Geometry *geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());            \
+        Local<Function> f = Local<Function>::Cast(args[1]);                             \
         if (args.Length() == 2) {                                                       \
             geosmethod##_baton_t *closure = new geosmethod##_baton_t();                 \
             closure->geom = geom;                                                       \
             closure->geom2 = geom2;                                                     \
-            closure->cb = Persistent<Function>::New(Handle<Function>::Cast(args[1]));   \
+            closure->cb.Reset(isolate, Persistent<Function>(isolate, f));               \
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
             uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
-            uv_ref((uv_handle_t*) &req);                                                      \
             geom->Ref();                                                                \
             geom2->_ref();                                                              \
-            return Undefined();                                                         \
+            args.GetReturnValue().Set(Undefined(isolate));                              \
         } else {                                                                        \
             try {                                                                       \
-                return geom->_geom->geosmethod(geom2->_geom) ? True() : False();        \
+                args.GetReturnValue().Set(                                              \
+                  geom->_geom->geosmethod(geom2->_geom) ? True(isolate) : False(isolate)\
+                );                                                                      \
+                return;                                                                 \
             } catch(geos::util::GEOSException exception) {                              \
-                return ThrowException(Exception::Error(String::New(exception.what()))); \
+                isolate->ThrowException(                                                \
+                  Exception::Error(String::NewFromUtf8(isolate, exception.what()))      \
+                );                                                                      \
             }                                                                           \
-            return Undefined();                                                         \
+            args.GetReturnValue().Set(Undefined(isolate));                              \
         }                                                                               \
     }
 
 
 #define NODE_GEOS_UNARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)               \
-    Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
-        HandleScope scope;                                                      \
+    void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args) {         \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
         geos::geom::Geometry* result = geom->_geom->geosmethod();               \
-        return scope.Close(Geometry::New(result));                              \
+        args.GetReturnValue().Set(Geometry::New(result));                       \
     }                                                                           \
 
 #define NODE_GEOS_BINARY_TOPOLOGIC_FUNCTION(cppmethod, geosmethod)              \
-    Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
-        HandleScope scope;                                                      \
+    void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args) {         \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
         Geometry *geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());    \
         geos::geom::Geometry* result = geom->_geom->geosmethod(geom2->_geom);   \
-        return scope.Close(Geometry::New(result));                              \
+        args.GetReturnValue().Set(Geometry::New(result));                       \
     }                                                                           \
 
 #define NODE_GEOS_DOUBLE_GETTER(cppmethod, geosmethod)                          \
-    Handle<Value> Geometry::cppmethod(const Arguments& args) {                  \
-        HandleScope scope;                                                      \
+    void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args) {\
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
-        return scope.Close(Number::New(geom->_geom->geosmethod()));             \
+        args.GetReturnValue().Set(geom->_geom->geosmethod());                   \
     }                                                                           \
 
 #define NODE_GEOS_V8_FUNCTION(cppmethod) \
-    static Handle<Value> cppmethod(const Arguments& args); \
+    static void cppmethod(const FunctionCallbackInfo<Value>& args); \
     static void EIO_##cppmethod(uv_work_t *req); \
     static void EIO_After##cppmethod(uv_work_t *req, int status); \
 
@@ -165,7 +185,7 @@ class Geometry : public ObjectWrap {
     void _unref() { Unref(); };
 
  protected:
-    static Handle<Value> New(const Arguments& args);
+    static void New(const FunctionCallbackInfo<Value>& args);
     // GEOS unary predicates
     NODE_GEOS_V8_FUNCTION(IsSimple);
     NODE_GEOS_V8_FUNCTION(IsValid);
@@ -184,36 +204,36 @@ class Geometry : public ObjectWrap {
     NODE_GEOS_V8_FUNCTION(Covers);
     NODE_GEOS_V8_FUNCTION(CoveredBy);
 
-    //static Handle<Value> EqualsExact(const Arguments& args);
-    static Handle<Value> IsWithinDistance(const Arguments& args);
+    //static void EqualsExact(const FunctionCallbackInfo<Value>& args);
+    static void IsWithinDistance(const FunctionCallbackInfo<Value>& args);
 
     // GEOS topologic function
-    static Handle<Value> Intersection(const Arguments& args);
-    static Handle<Value> Union(const Arguments& args);
-    static Handle<Value> Difference(const Arguments& args);
-    static Handle<Value> SymDifference(const Arguments& args);
+    static void Intersection(const FunctionCallbackInfo<Value>& args);
+    static void Union(const FunctionCallbackInfo<Value>& args);
+    static void Difference(const FunctionCallbackInfo<Value>& args);
+    static void SymDifference(const FunctionCallbackInfo<Value>& args);
 
-    static Handle<Value> GetBoundary(const Arguments& args);
-    static Handle<Value> GetEnvelope(const Arguments& args);
-    static Handle<Value> ConvexHull(const Arguments& args);
+    static void GetBoundary(const FunctionCallbackInfo<Value>& args);
+    static void GetEnvelope(const FunctionCallbackInfo<Value>& args);
+    static void ConvexHull(const FunctionCallbackInfo<Value>& args);
 
-    static Handle<Value> Buffer(const Arguments& args);
+    static void Buffer(const FunctionCallbackInfo<Value>& args);
 
-    static Handle<Value> Distance(const Arguments& args);
+    static void Distance(const FunctionCallbackInfo<Value>& args);
 
-    static Handle<Value> GetArea(const Arguments& args);
-    static Handle<Value> GetLength(const Arguments& args);
+    static void GetArea(const FunctionCallbackInfo<Value>& args);
+    static void GetLength(const FunctionCallbackInfo<Value>& args);
 
-    static Handle<Value> GetSRID(const Arguments& args);
-    static Handle<Value> SetSRID(const Arguments& args);
+    static void GetSRID(const FunctionCallbackInfo<Value>& args);
+    static void SetSRID(const FunctionCallbackInfo<Value>& args);
 
-    static Handle<Value> GetGeometryType(const Arguments& args);
+    static void GetGeometryType(const FunctionCallbackInfo<Value>& args);
 
-    static Handle<Value> ToJSON(const Arguments& args);
+    static void ToJSON(const FunctionCallbackInfo<Value>& args);
 
  private:
-    static Persistent<FunctionTemplate> constructor;
-    static Handle<Value> ToString(const Arguments& args);
+    static Persistent<Function> constructor;
+    static void ToString(const FunctionCallbackInfo<Value>& args);
 
 };
 #endif
