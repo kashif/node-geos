@@ -3,7 +3,6 @@ sudo: required
 dist: trusty
 
 node_js:
-  - '0.10'
   - '0.12'
   - '4.4'
   - '5.10'
