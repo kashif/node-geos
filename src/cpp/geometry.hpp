@@ -14,12 +14,12 @@
         bool result;                                                                    \
     } geosmethod##_baton_t;                                                             \
                                                                                         \
-    void Geometry::EIO_##cppmethod(uv_work_t *req) {                                    \
+    void Geometry::cppmethod##Async(uv_work_t *req) {                                    \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         closure->result = closure->geom->_geom->geosmethod();                           \
     }                                                                                   \
                                                                                         \
-    void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
+    void Geometry::cppmethod##AsyncComplete(uv_work_t *req, int status) {                   \
         Isolate* isolate = Isolate::GetCurrent();                                       \
         HandleScope scope(isolate);                                                     \
                                                                                         \
@@ -55,7 +55,7 @@
             closure->cb.Reset(isolate, Local<Function>::Cast(args[0]));                 \
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
-            uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
+            uv_queue_work(uv_default_loop(), req, cppmethod##Async, cppmethod##AsyncComplete);\
             geom->Ref();                                                                \
             args.GetReturnValue().Set(Undefined(isolate));                              \
         } else {                                                                        \
@@ -82,12 +82,12 @@
         bool result;                                                                    \
     } geosmethod##_baton_t;                                                             \
                                                                                         \
-    void Geometry::EIO_##cppmethod(uv_work_t *req) {                                    \
+    void Geometry::cppmethod##Async(uv_work_t *req) {                                    \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
         closure->result = closure->geom->_geom->geosmethod(closure->geom2->_geom);      \
     }                                                                                   \
                                                                                         \
-    void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
+    void Geometry::cppmethod##AsyncComplete(uv_work_t *req, int status) {                   \
         Isolate* isolate = Isolate::GetCurrent();                                       \
         HandleScope scope(isolate);                                                     \
                                                                                         \
@@ -126,7 +126,7 @@
             closure->cb.Reset(isolate, Persistent<Function>(isolate, f));               \
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
-            uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
+            uv_queue_work(uv_default_loop(), req, cppmethod##Async, cppmethod##AsyncComplete);\
             geom->Ref();                                                                \
             geom2->_ref();                                                              \
             args.GetReturnValue().Set(Undefined(isolate));                              \
@@ -169,8 +169,8 @@
 
 #define NODE_GEOS_V8_FUNCTION(cppmethod) \
     static void cppmethod(const FunctionCallbackInfo<Value>& args); \
-    static void EIO_##cppmethod(uv_work_t *req); \
-    static void EIO_After##cppmethod(uv_work_t *req, int status); \
+    static void cppmethod##Async(uv_work_t *req); \
+    static void cppmethod##AsyncComplete(uv_work_t *req, int status); \
 
 class Geometry : public ObjectWrap {
  public:
