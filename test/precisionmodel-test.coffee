@@ -3,7 +3,7 @@
 vows = require "vows"
 assert = require "assert"
 
-PrecisionModel = (require "../src").PrecisionModel
+PrecisionModel = (require "../lib").PrecisionModel
 
 tests = (vows.describe "PrecisionModel").addBatch
 

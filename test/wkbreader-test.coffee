@@ -3,10 +3,10 @@
 vows = require "vows"
 assert = require "assert"
 
-WKBReader = (require "../src").WKBReader
-Geometry = (require "../src").Geometry
-GeometryFactory = (require "../src").GeometryFactory
-PrecisionModel = (require "../src").PrecisionModel
+WKBReader = (require "../lib").WKBReader
+Geometry = (require "../lib").Geometry
+GeometryFactory = (require "../lib").GeometryFactory
+PrecisionModel = (require "../lib").PrecisionModel
 
 tests = (vows.describe "WKBReader").addBatch
 
