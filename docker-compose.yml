@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  node-geos:
+    build:
+      context: ./
+      args:
+        GEOS_GIT_TAG: 3.5.0
+    #tty: true

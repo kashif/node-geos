@@ -3,9 +3,9 @@
 vows = require "vows"
 assert = require "assert"
 
-Geometry = (require "../src").Geometry
-WKTReader = (require "../src").WKTReader
-GeoJSONReader = (require "../src").GeoJSONReader
+Geometry = (require "../lib").Geometry
+WKTReader = (require "../lib").WKTReader
+GeoJSONReader = (require "../lib").GeoJSONReader
 
 reader = new WKTReader()
 
